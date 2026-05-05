@@ -49,7 +49,7 @@ const CONTACTS: ContactLink[] = [
   { label: "Email", value: "palokris@gmail.com", href: "mailto:palokris@gmail.com" },
 ];
 
-function Card({ card }: { card: WorkCard }) {
+function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void }) {
   return (
     <article className="card" data-testid={`card-${card.id}`}>
       <div className="card-media" style={{ ["--natural-ratio" as string]: card.ratio }}>
@@ -64,7 +64,16 @@ function Card({ card }: { card: WorkCard }) {
             data-testid={`video-${card.id}`}
           />
         ) : (
-          <img className="card-img" src={`${BASE}${card.image}`} alt={card.title} loading="lazy" />
+          <button
+            type="button"
+            className="card-img-btn"
+            onClick={() => onOpen(card)}
+            aria-label={`Открыть ${card.title} на весь экран`}
+            data-testid={`open-${card.id}`}
+          >
+            <img className="card-img" src={`${BASE}${card.image}`} alt={card.title} loading="lazy" />
+            <span className="card-zoom-hint" aria-hidden="true">⤢</span>
+          </button>
         )}
         {card.video && <span className="video-badge" aria-hidden="true">▶ VIDEO</span>}
       </div>
@@ -77,7 +86,40 @@ function Card({ card }: { card: WorkCard }) {
 
 export default function Home() {
   const [activeSlide, setActiveSlide] = useState(1);
+  const [lightboxCard, setLightboxCard] = useState<WorkCard | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
+  const lightboxCloseRef = useRef<HTMLButtonElement | null>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+
+  const openLightbox = (card: WorkCard) => {
+    openerRef.current = (document.activeElement as HTMLElement) ?? null;
+    setLightboxCard(card);
+  };
+
+  useEffect(() => {
+    if (!lightboxCard) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusTimer = window.setTimeout(() => lightboxCloseRef.current?.focus(), 0);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setLightboxCard(null); return; }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        lightboxCloseRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = original;
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", onKey);
+      const opener = openerRef.current;
+      if (opener && document.contains(opener)) {
+        opener.focus();
+      }
+      openerRef.current = null;
+    };
+  }, [lightboxCard]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -154,7 +196,7 @@ export default function Home() {
         </header>
 
         <div className="cards-grid">
-          {SLIDE_2_CARDS.map((card) => <Card key={card.id} card={card} />)}
+          {SLIDE_2_CARDS.map((card) => <Card key={card.id} card={card} onOpen={openLightbox} />)}
         </div>
       </section>
 
@@ -170,7 +212,7 @@ export default function Home() {
         </header>
 
         <div className="cards-grid">
-          {SLIDE_3_CARDS.map((card) => <Card key={card.id} card={card} />)}
+          {SLIDE_3_CARDS.map((card) => <Card key={card.id} card={card} onOpen={openLightbox} />)}
         </div>
 
         <footer className="contacts-footer">
@@ -193,6 +235,41 @@ export default function Home() {
           ))}
         </footer>
       </section>
+
+      {lightboxCard && (
+        <div
+          className="lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lightboxCard.title}
+          onClick={(e) => { if (e.target === e.currentTarget) setLightboxCard(null); }}
+          data-testid="lightbox"
+        >
+          <button
+            ref={lightboxCloseRef}
+            type="button"
+            className="lightbox-close"
+            onClick={() => setLightboxCard(null)}
+            aria-label="Закрыть"
+            data-testid="lightbox-close"
+          >
+            ×
+          </button>
+          <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
+            <img
+              className="lightbox-img"
+              src={`${BASE}${lightboxCard.image}`}
+              alt={lightboxCard.title}
+              data-testid="lightbox-img"
+            />
+            <figcaption className="lightbox-caption">
+              <span className="lightbox-tag">{lightboxCard.tag}</span>
+              <span className="lightbox-title">{lightboxCard.title}</span>
+              <span className="lightbox-sub">{lightboxCard.subtitle}</span>
+            </figcaption>
+          </figure>
+        </div>
+      )}
 
       <nav className="nav-dots" aria-label="Навигация по слайдам">
         <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
@@ -386,6 +463,127 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   object-fit: cover;
 }
 .card-video { background: #000; }
+
+.card-img-btn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+  display: block;
+  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
+  overflow: hidden;
+}
+.card-img-btn:focus-visible { outline: 2px solid #E03018; outline-offset: -2px; }
+.card-img-btn .card-img { transition: transform 0.4s ease; }
+.card-img-btn:hover .card-img { transform: scale(1.04); }
+.card-zoom-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(20,18,16,0.72);
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+}
+.card-img-btn:hover .card-zoom-hint,
+.card-img-btn:focus-visible .card-zoom-hint { opacity: 1; }
+@media (hover: none) and (pointer: coarse) {
+  .card-zoom-hint { opacity: 1; }
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(20,18,16,0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 16px 24px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  animation: fade-in 0.18s ease-out;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.lightbox-close {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 101;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.96);
+  color: #151210;
+  cursor: pointer;
+  font-size: 26px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  -webkit-tap-highlight-color: transparent;
+}
+.lightbox-close:active { transform: scale(0.94); }
+.lightbox-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: min(1200px, 100%);
+  max-height: 100%;
+}
+.lightbox-img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 2px;
+  user-select: none;
+}
+.lightbox-caption {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: #F4F1EB;
+  text-align: left;
+}
+.lightbox-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: #E03018;
+  text-transform: uppercase;
+}
+.lightbox-title {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+.lightbox-sub {
+  font-family: 'Onest', sans-serif;
+  font-size: 12px;
+  color: rgba(244,241,235,0.65);
+}
 
 .video-badge {
   position: absolute;
