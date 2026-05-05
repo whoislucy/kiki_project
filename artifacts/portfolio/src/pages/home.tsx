@@ -19,6 +19,26 @@ const SLIDE_2_VIDEOS: VideoOverlay[] = [
   { src: "media3.mp4", poster: "image8.png", x: 333, y: 810, w: 140, h: 229 },
 ];
 
+type LinkOverlay = {
+  href: string;
+  label: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
+const SLIDE_1_LINKS: LinkOverlay[] = [
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram @atelier.de.kiki", x: 54, y: 1063, w: 130, h: 22 },
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 668, y: 1063, w: 86, h: 22 },
+];
+
+const SLIDE_3_LINKS: LinkOverlay[] = [
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 315, y: 1066, w: 140, h: 24 },
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram atelier.de.kiki", x: 458, y: 1066, w: 140, h: 24 },
+  { href: "mailto:palokris@gmail.com", label: "Email palokris@gmail.com", x: 619, y: 1066, w: 145, h: 24 },
+];
+
 export default function Home() {
   useEffect(() => {
     const root = document.documentElement;
@@ -74,6 +94,16 @@ export default function Home() {
           z-index: 2;
         }
         .slide-frame video::-webkit-media-controls-panel { background: rgba(0,0,0,0.55); }
+        .link-overlay {
+          position: absolute;
+          z-index: 3;
+          display: block;
+          background: transparent;
+          border-radius: 4px;
+          transition: background-color 0.15s ease;
+        }
+        .link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
+        .link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
       `}</style>
 
       <section className="slide-frame" data-testid="slide-1">
@@ -84,6 +114,19 @@ export default function Home() {
           draggable={false}
           data-testid="img-slide-1"
         />
+        {SLIDE_1_LINKS.map((l, i) => (
+          <a
+            key={`s1-link-${i}`}
+            className="link-overlay"
+            href={l.href}
+            target={l.href.startsWith("mailto:") ? undefined : "_blank"}
+            rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+            aria-label={l.label}
+            title={l.label}
+            style={{ left: l.x, top: l.y, width: l.w, height: l.h }}
+            data-testid={`link-s1-${i}`}
+          />
+        ))}
       </section>
 
       <section className="slide-frame" data-testid="slide-2">
@@ -117,6 +160,19 @@ export default function Home() {
           draggable={false}
           data-testid="img-slide-3"
         />
+        {SLIDE_3_LINKS.map((l, i) => (
+          <a
+            key={`s3-link-${i}`}
+            className="link-overlay"
+            href={l.href}
+            target={l.href.startsWith("mailto:") ? undefined : "_blank"}
+            rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+            aria-label={l.label}
+            title={l.label}
+            style={{ left: l.x, top: l.y, width: l.w, height: l.h }}
+            data-testid={`link-s3-${i}`}
+          />
+        ))}
       </section>
     </main>
   );
