@@ -313,20 +313,6 @@ export default function Home() {
           </div>
         )}
 
-        <nav className="nav-dots" aria-label="Навигация по слайдам">
-          <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
-          {[1, 2, 3].map((n) => (
-            <button
-              key={n}
-              type="button"
-              className="nav-dot"
-              data-active={activeSlide === n}
-              onClick={() => scrollToSlide(n - 1)}
-              aria-label={`Перейти к слайду ${n}`}
-              data-testid={`nav-dot-${n}`}
-            />
-          ))}
-        </nav>
       </main>
     );
   }
