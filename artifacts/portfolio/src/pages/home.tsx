@@ -18,17 +18,17 @@ const SLIDE_2_VIDEOS: VideoOverlay[] = [
 ];
 
 const SLIDE_2_PHOTOS: PhotoOverlay[] = [
-  { cardId: "w1", x: 54, y: 92, w: 215, h: 338 },
-  { cardId: "w4", x: 294, y: 455, w: 183, h: 304 },
-  { cardId: "w5", x: 141, y: 761, w: 160, h: 243 },
-  { cardId: "w7", x: 505, y: 807, w: 158, h: 235 },
+  { cardId: "w1", x: 54, y: 93, w: 215, h: 378 },
+  { cardId: "w4", x: 329, y: 466, w: 167, h: 278 },
+  { cardId: "w5", x: 135, y: 809, w: 140, h: 230 },
+  { cardId: "w7", x: 531, y: 810, w: 141, h: 230 },
 ];
 
 const SLIDE_3_PHOTOS: PhotoOverlay[] = [
-  { cardId: "l1", x: 54, y: 92, w: 215, h: 363 },
-  { cardId: "l2", x: 280, y: 92, w: 215, h: 363 },
-  { cardId: "l3", x: 439, y: 180, w: 261, h: 180 },
-  { cardId: "l4", x: 86, y: 511, w: 381, h: 290 },
+  { cardId: "l1", x: 53, y: 93, w: 184, h: 328 },
+  { cardId: "l2", x: 249, y: 93, w: 184, h: 328 },
+  { cardId: "l3", x: 485, y: 202, w: 218, h: 112 },
+  { cardId: "l4", x: 109, y: 546, w: 475, h: 296 },
   { cardId: "l5", x: 331, y: 620, w: 215, h: 160 },
 ];
 
@@ -297,19 +297,36 @@ export default function Home() {
               alt={`Slide ${slide.num}`}
               draggable={false}
             />
-            {slide.videos.map((v, i) => (
-              <video
-                key={`s${slide.num}-v-${i}`}
-                className="video-overlay"
-                src={`${BASE}${v.src}`}
-                poster={`${BASE}${v.poster}`}
-                controls
-                playsInline
-                preload="metadata"
-                style={styleFor(v)}
-                data-testid={`video-${v.src.replace(/\./g, "-")}`}
-              />
-            ))}
+            {slide.videos.map((v, i) => {
+              const card = ALL_CARDS.find((c) => c.video === v.src);
+              return (
+                <div
+                  key={`s${slide.num}-v-${i}`}
+                  className="video-overlay-wrap"
+                  style={styleFor(v)}
+                >
+                  <video
+                    className="video-overlay"
+                    src={`${BASE}${v.src}`}
+                    poster={`${BASE}${v.poster}`}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    data-testid={`video-${v.src.replace(/\./g, "-")}`}
+                  />
+                  {card && (
+                    <button
+                      type="button"
+                      className="video-zoom-btn"
+                      onClick={() => openLightbox(card)}
+                      aria-label={`Открыть ${card.title} на весь экран`}
+                      title={card.title}
+                      data-testid={`video-zoom-${card.id}`}
+                    >⤢</button>
+                  )}
+                </div>
+              );
+            })}
             {slide.links.map((l, i) => (
               <a
                 key={`s${slide.num}-l-${i}`}
@@ -672,13 +689,50 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   pointer-events: none;
   display: block;
 }
+.video-overlay-wrap {
+  position: absolute;
+  z-index: 2;
+}
 .video-overlay {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   background: #000;
-  z-index: 2;
   display: block;
 }
+.video-zoom-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(20, 18, 16, 0.78);
+  color: #fff;
+  cursor: zoom-in;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  backdrop-filter: blur(6px);
+  z-index: 4;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  pointer-events: none;
+}
+.video-overlay-wrap:hover .video-zoom-btn,
+.video-zoom-btn:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.video-zoom-btn:hover { background: rgba(224, 48, 24, 0.92); }
 .link-overlay {
   position: absolute;
   z-index: 3;
