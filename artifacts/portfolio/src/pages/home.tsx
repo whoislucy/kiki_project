@@ -103,32 +103,51 @@ const CONTACTS: ContactLink[] = [
   { label: "Email", value: "palokris@gmail.com", href: "mailto:palokris@gmail.com" },
 ];
 
+function useSwipe(onPrev: () => void, onNext: () => void, enabled: boolean) {
+  useEffect(() => {
+    if (!enabled) return;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    const onStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) { tracking = false; return; }
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
+    };
+    const onEnd = (e: TouchEvent) => {
+      if (!tracking) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      tracking = false;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) onNext(); else onPrev();
+      }
+    };
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchend", onEnd, { passive: true });
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchend", onEnd);
+    };
+  }, [onPrev, onNext, enabled]);
+}
+
 function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void }) {
   return (
     <article className="card" data-testid={`card-${card.id}`}>
       <div className="card-media" style={{ ["--natural-ratio" as string]: card.ratio }}>
-        {card.video ? (
-          <video
-            className="card-video"
-            src={`${BASE}${card.video}`}
-            poster={`${BASE}${card.image}`}
-            controls
-            playsInline
-            preload="metadata"
-            data-testid={`video-${card.id}`}
-          />
-        ) : (
-          <button
-            type="button"
-            className="card-img-btn"
-            onClick={() => onOpen(card)}
-            aria-label={`Открыть ${card.title} на весь экран`}
-            data-testid={`open-${card.id}`}
-          >
-            <img className="card-img" src={`${BASE}${card.image}`} alt={card.title} loading="lazy" />
-            <span className="card-zoom-hint" aria-hidden="true">⤢</span>
-          </button>
-        )}
+        <button
+          type="button"
+          className="card-img-btn"
+          onClick={() => onOpen(card)}
+          aria-label={`Открыть ${card.title} на весь экран`}
+          data-testid={`open-${card.id}`}
+        >
+          <img className="card-img" src={`${BASE}${card.image}`} alt={card.title} loading="lazy" />
+          <span className="card-zoom-hint" aria-hidden="true">{card.video ? "▶" : "⤢"}</span>
+        </button>
         {card.video && <span className="video-badge" aria-hidden="true">▶ VIDEO</span>}
       </div>
       <p className="card-tag">{card.tag}</p>
@@ -138,33 +157,51 @@ function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void 
   );
 }
 
+const ALL_CARDS: WorkCard[] = [...SLIDE_2_CARDS, ...SLIDE_3_CARDS];
+
 export default function Home() {
   const isDesktop = useIsDesktop();
   const [activeSlide, setActiveSlide] = useState(1);
-  const [lightboxCard, setLightboxCard] = useState<WorkCard | null>(null);
-  const [zoomedSlide, setZoomedSlide] = useState<number | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [zoomedSlideIndex, setZoomedSlideIndex] = useState<number | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
   const lightboxCloseRef = useRef<HTMLButtonElement | null>(null);
   const slideZoomCloseRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<HTMLElement | null>(null);
 
+  const lightboxCard = lightboxIndex !== null ? ALL_CARDS[lightboxIndex] : null;
+  const lightboxOpen = lightboxIndex !== null;
+  const slideZoomOpen = zoomedSlideIndex !== null;
+
   const openLightbox = (card: WorkCard) => {
+    const idx = ALL_CARDS.findIndex((c) => c.id === card.id);
+    if (idx < 0) return;
     openerRef.current = (document.activeElement as HTMLElement) ?? null;
-    setLightboxCard(card);
+    setLightboxIndex(idx);
   };
 
   const openSlideZoom = (num: number) => {
     openerRef.current = (document.activeElement as HTMLElement) ?? null;
-    setZoomedSlide(num);
+    setZoomedSlideIndex(num - 1);
   };
 
+  const lightboxPrev = () => setLightboxIndex((i) => (i === null ? null : (i - 1 + ALL_CARDS.length) % ALL_CARDS.length));
+  const lightboxNext = () => setLightboxIndex((i) => (i === null ? null : (i + 1) % ALL_CARDS.length));
+  const slidePrev = () => setZoomedSlideIndex((i) => (i === null ? null : (i - 1 + 3) % 3));
+  const slideNext = () => setZoomedSlideIndex((i) => (i === null ? null : (i + 1) % 3));
+
+  useSwipe(lightboxPrev, lightboxNext, lightboxOpen);
+  useSwipe(slidePrev, slideNext, slideZoomOpen);
+
   useEffect(() => {
-    if (zoomedSlide === null) return;
+    if (!slideZoomOpen) return;
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const focusTimer = window.setTimeout(() => slideZoomCloseRef.current?.focus(), 0);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setZoomedSlide(null); return; }
+      if (e.key === "Escape") { setZoomedSlideIndex(null); return; }
+      if (e.key === "ArrowLeft") { e.preventDefault(); slidePrev(); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); slideNext(); return; }
       if (e.key === "Tab") { e.preventDefault(); slideZoomCloseRef.current?.focus(); }
     };
     window.addEventListener("keydown", onKey);
@@ -176,19 +213,19 @@ export default function Home() {
       if (opener && document.contains(opener)) opener.focus();
       openerRef.current = null;
     };
-  }, [zoomedSlide]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slideZoomOpen]);
 
   useEffect(() => {
-    if (!lightboxCard) return;
+    if (!lightboxOpen) return;
     const original = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const focusTimer = window.setTimeout(() => lightboxCloseRef.current?.focus(), 0);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setLightboxCard(null); return; }
-      if (e.key === "Tab") {
-        e.preventDefault();
-        lightboxCloseRef.current?.focus();
-      }
+      if (e.key === "Escape") { setLightboxIndex(null); return; }
+      if (e.key === "ArrowLeft") { e.preventDefault(); lightboxPrev(); return; }
+      if (e.key === "ArrowRight") { e.preventDefault(); lightboxNext(); return; }
+      if (e.key === "Tab") { e.preventDefault(); lightboxCloseRef.current?.focus(); }
     };
     window.addEventListener("keydown", onKey);
     return () => {
@@ -196,12 +233,11 @@ export default function Home() {
       window.clearTimeout(focusTimer);
       window.removeEventListener("keydown", onKey);
       const opener = openerRef.current;
-      if (opener && document.contains(opener)) {
-        opener.focus();
-      }
+      if (opener && document.contains(opener)) opener.focus();
       openerRef.current = null;
     };
-  }, [lightboxCard]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lightboxOpen]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -283,31 +319,48 @@ export default function Home() {
           </section>
         ))}
 
-        {zoomedSlide !== null && (
+        {slideZoomOpen && (
           <div
             className="lightbox"
             role="dialog"
             aria-modal="true"
-            aria-label={`Слайд ${zoomedSlide} увеличенный`}
-            onClick={(e) => { if (e.target === e.currentTarget) setZoomedSlide(null); }}
+            aria-label={`Слайд ${zoomedSlideIndex! + 1} увеличенный`}
+            onClick={(e) => { if (e.target === e.currentTarget) setZoomedSlideIndex(null); }}
             data-testid="slide-lightbox"
           >
             <button
               ref={slideZoomCloseRef}
               type="button"
               className="lightbox-close"
-              onClick={() => setZoomedSlide(null)}
+              onClick={() => setZoomedSlideIndex(null)}
               aria-label="Закрыть"
               data-testid="slide-lightbox-close"
             >
               ×
             </button>
+            <button
+              type="button"
+              className="lightbox-nav lightbox-prev"
+              onClick={(e) => { e.stopPropagation(); slidePrev(); }}
+              aria-label="Предыдущий слайд"
+              data-testid="slide-lightbox-prev"
+            >‹</button>
+            <button
+              type="button"
+              className="lightbox-nav lightbox-next"
+              onClick={(e) => { e.stopPropagation(); slideNext(); }}
+              aria-label="Следующий слайд"
+              data-testid="slide-lightbox-next"
+            >›</button>
+            <span className="lightbox-counter" data-testid="slide-lightbox-counter">
+              {String(zoomedSlideIndex! + 1).padStart(2, "0")} / 03
+            </span>
             <div className="slide-lightbox-inner" onClick={(e) => e.stopPropagation()}>
               <img
                 className="slide-lightbox-img"
-                src={`${BASE}slide-${zoomedSlide}.png`}
-                alt={`Slide ${zoomedSlide} fullscreen`}
-                data-testid={`slide-lightbox-img-${zoomedSlide}`}
+                src={`${BASE}slide-${zoomedSlideIndex! + 1}.png`}
+                alt={`Slide ${zoomedSlideIndex! + 1} fullscreen`}
+                data-testid={`slide-lightbox-img-${zoomedSlideIndex! + 1}`}
               />
             </div>
           </div>
@@ -413,26 +466,56 @@ export default function Home() {
           role="dialog"
           aria-modal="true"
           aria-label={lightboxCard.title}
-          onClick={(e) => { if (e.target === e.currentTarget) setLightboxCard(null); }}
+          onClick={(e) => { if (e.target === e.currentTarget) setLightboxIndex(null); }}
           data-testid="lightbox"
         >
           <button
             ref={lightboxCloseRef}
             type="button"
             className="lightbox-close"
-            onClick={() => setLightboxCard(null)}
+            onClick={() => setLightboxIndex(null)}
             aria-label="Закрыть"
             data-testid="lightbox-close"
           >
             ×
           </button>
+          <button
+            type="button"
+            className="lightbox-nav lightbox-prev"
+            onClick={(e) => { e.stopPropagation(); lightboxPrev(); }}
+            aria-label="Предыдущая работа"
+            data-testid="lightbox-prev"
+          >‹</button>
+          <button
+            type="button"
+            className="lightbox-nav lightbox-next"
+            onClick={(e) => { e.stopPropagation(); lightboxNext(); }}
+            aria-label="Следующая работа"
+            data-testid="lightbox-next"
+          >›</button>
+          <span className="lightbox-counter" data-testid="lightbox-counter">
+            {String(lightboxIndex! + 1).padStart(2, "0")} / {String(ALL_CARDS.length).padStart(2, "0")}
+          </span>
           <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
-            <img
-              className="lightbox-img"
-              src={`${BASE}${lightboxCard.image}`}
-              alt={lightboxCard.title}
-              data-testid="lightbox-img"
-            />
+            {lightboxCard.video ? (
+              <video
+                key={lightboxCard.id}
+                className="lightbox-video"
+                src={`${BASE}${lightboxCard.video}`}
+                poster={`${BASE}${lightboxCard.image}`}
+                controls
+                autoPlay
+                playsInline
+                data-testid="lightbox-video"
+              />
+            ) : (
+              <img
+                className="lightbox-img"
+                src={`${BASE}${lightboxCard.image}`}
+                alt={lightboxCard.title}
+                data-testid="lightbox-img"
+              />
+            )}
             <figcaption className="lightbox-caption">
               <span className="lightbox-tag">{lightboxCard.tag}</span>
               <span className="lightbox-title">{lightboxCard.title}</span>
@@ -843,6 +926,62 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   font-family: 'Onest', sans-serif;
   font-size: 12px;
   color: rgba(244,241,235,0.65);
+}
+.lightbox-video {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 160px);
+  width: auto;
+  height: auto;
+  background: #000;
+  border-radius: 2px;
+}
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 101;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #151210;
+  cursor: pointer;
+  font-size: 32px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  -webkit-tap-highlight-color: transparent;
+  padding: 0 0 4px 0;
+  font-weight: 300;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.lightbox-nav:hover { background: #fff; }
+.lightbox-nav:active { transform: translateY(-50%) scale(0.94); }
+.lightbox-prev { left: 12px; }
+.lightbox-next { right: 12px; }
+@media (max-width: 480px) {
+  .lightbox-nav { width: 40px; height: 40px; font-size: 26px; }
+  .lightbox-prev { left: 8px; }
+  .lightbox-next { right: 8px; }
+}
+.lightbox-counter {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 101;
+  color: rgba(255,255,255,0.85);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  background: rgba(20,18,16,0.6);
+  padding: 6px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
 }
 
 .video-badge {
