@@ -522,8 +522,18 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   .slide { padding: 24px 16px 40px; }
   .slide-header { gap: 8px; }
   .services { grid-template-columns: 1fr; gap: 0; }
-  .contacts-footer { grid-template-columns: 1fr 1fr; }
+  .contacts-footer {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    margin-top: clamp(24px, 4vw, 32px);
+    padding-top: 14px;
+  }
+  .contact-block { padding: 0; gap: 2px; min-height: 0; }
   .contact-block:first-child { grid-column: 1 / -1; }
+  .contact-label { font-size: 8.5px; letter-spacing: 0.1em; }
+  .contact-value { font-size: 13px; }
+  .contact-author { font-size: 15px; }
+  .contact-block:nth-child(4) .contact-value { font-size: 11px; word-break: break-all; }
 }
 
 @media (max-width: 340px) {
