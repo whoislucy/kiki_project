@@ -764,8 +764,8 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 }
 .photo-overlay-hint {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 14px;
+  right: 14px;
   width: 30px;
   height: 30px;
   border-radius: 50%;
