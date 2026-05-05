@@ -702,6 +702,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   background: #000;
   display: block;
 }
+.video-overlay-wrap { cursor: pointer; }
 .video-zoom-btn {
   position: absolute;
   top: 8px;
@@ -712,7 +713,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   border-radius: 50%;
   background: rgba(20, 18, 16, 0.78);
   color: #fff;
-  cursor: zoom-in;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -728,7 +729,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 .video-zoom-btn:hover,
 .video-zoom-btn:focus-visible {
   opacity: 1;
-  background: rgba(20, 18, 16, 0.92);
+  background: #E03018;
 }
 .link-overlay {
   position: absolute;
@@ -749,12 +750,12 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: zoom-in;
+  cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   outline: none;
   transition: background-color 0.18s ease, box-shadow 0.18s ease;
 }
-.photo-overlay * { cursor: zoom-in; }
+.photo-overlay * { cursor: pointer; }
 .photo-overlay:hover {
   background: rgba(20, 18, 16, 0.18);
   box-shadow: inset 0 0 0 1px rgba(244, 241, 235, 0.6);
@@ -777,15 +778,14 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   justify-content: center;
   font-size: 14px;
   backdrop-filter: blur(6px);
-  opacity: 0;
-  transform: translateY(-3px);
-  transition: opacity 0.18s ease, transform 0.18s ease;
+  opacity: 0.85;
+  transition: opacity 0.18s ease, background 0.15s ease;
   pointer-events: none;
 }
 .photo-overlay:hover .photo-overlay-hint,
 .photo-overlay:focus-visible .photo-overlay-hint {
   opacity: 1;
-  transform: translateY(0);
+  background: #E03018;
 }
 
 .slide-lightbox-inner {
