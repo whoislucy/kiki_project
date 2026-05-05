@@ -116,7 +116,7 @@ export default function Home() {
         <header className="slide-header">
           <span className="header-tag">AI VISUAL CREATOR · PORTFOLIO MMXXVI</span>
           <span className="header-asterisk">✱</span>
-          <span className="header-num">01 / 03</span>
+          <span className="header-num" data-testid="header-num-1">{String(activeSlide).padStart(2, "0")} / 03</span>
         </header>
 
         <div className="hero">
@@ -159,7 +159,7 @@ export default function Home() {
         <header className="slide-header">
           <span className="header-tag">I · SELECTED WORKS</span>
           <span className="header-asterisk">✱</span>
-          <span className="header-num">02 / 03</span>
+          <span className="header-num" data-testid="header-num-2">{String(activeSlide).padStart(2, "0")} / 03</span>
         </header>
 
         <div className="cards-grid">
@@ -175,7 +175,7 @@ export default function Home() {
         <header className="slide-header">
           <span className="header-tag">II · LOOKBOOKS & PORTRAITS</span>
           <span className="header-asterisk">✱</span>
-          <span className="header-num">03 / 03</span>
+          <span className="header-num" data-testid="header-num-3">{String(activeSlide).padStart(2, "0")} / 03</span>
         </header>
 
         <div className="cards-grid">
