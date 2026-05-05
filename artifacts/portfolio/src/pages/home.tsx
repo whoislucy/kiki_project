@@ -646,10 +646,10 @@ export default function Home() {
 
 const styles = `
 :root { color-scheme: light; }
-html, body { margin: 0; padding: 0; background: #F4F1EB; }
+html, body { margin: 0; padding: 0; background: #EEEBE5; }
 
 .portfolio-root {
-  background: #F4F1EB;
+  background: #EEEBE5;
   min-height: 100vh;
   font-family: 'Onest', 'Inter', system-ui, sans-serif;
   color: #151210;
@@ -664,14 +664,14 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   flex-direction: column;
   align-items: center;
   gap: 0;
-  background: #F4F1EB;
+  background: #EEEBE5;
 }
 .slide-frame {
   position: relative;
   width: 100%;
   max-width: ${SLIDE_W}px;
   aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
-  background: #F4F1EB;
+  background: #EEEBE5;
   overflow: hidden;
 }
 .slide-bg {
@@ -1062,7 +1062,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: #F4F1EB;
+  color: #EEEBE5;
   text-align: left;
 }
 .lightbox-tag {
