@@ -275,21 +275,12 @@ export default function Home() {
             className="slide-frame"
             data-testid={`slide-${slide.num}`}
           >
-            <button
-              type="button"
-              className="slide-bg-btn"
-              onClick={() => openSlideZoom(slide.num)}
-              aria-label={`Открыть слайд ${slide.num} на весь экран`}
-              data-testid={`zoom-btn-${slide.num}`}
-            >
-              <img
-                className="slide-bg"
-                src={`${BASE}${slide.src}`}
-                alt={`Slide ${slide.num}`}
-                draggable={false}
-              />
-              <span className="slide-zoom-hint" aria-hidden="true">⤢</span>
-            </button>
+            <img
+              className="slide-bg"
+              src={`${BASE}${slide.src}`}
+              alt={`Slide ${slide.num}`}
+              draggable={false}
+            />
             {slide.videos.map((v, i) => (
               <video
                 key={`s${slide.num}-v-${i}`}
@@ -575,56 +566,15 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   overflow: hidden;
   border-radius: 2px;
 }
-.slide-bg-btn {
+.slide-bg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  padding: 0;
-  margin: 0;
-  border: 0;
-  background: transparent;
-  cursor: zoom-in;
-  display: block;
-  z-index: 1;
-  -webkit-tap-highlight-color: transparent;
-  overflow: hidden;
-}
-.slide-bg-btn:focus-visible { outline: 2px solid #E03018; outline-offset: -2px; }
-.slide-bg {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   user-select: none;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  transform-origin: center;
-}
-.slide-bg-btn:hover .slide-bg,
-.slide-bg-btn:focus-visible .slide-bg { transform: scale(1.025); }
-.slide-zoom-hint {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(20,18,16,0.78);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  transform: translateY(-4px);
-  transition: opacity 0.2s ease, transform 0.2s ease, background 0.15s ease;
   pointer-events: none;
-}
-.slide-bg-btn:hover .slide-zoom-hint,
-.slide-bg-btn:focus-visible .slide-zoom-hint {
-  opacity: 1;
-  transform: translateY(0);
+  display: block;
 }
 .video-overlay {
   position: absolute;
@@ -644,12 +594,6 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 }
 .link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
 .link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
-
-.slide-frame { transition: box-shadow 0.3s ease; }
-.slide-frame:hover {
-  box-shadow: 0 40px 80px -22px rgba(20,18,16,0.32),
-              0 22px 44px -18px rgba(20,18,16,0.22);
-}
 
 .slide-lightbox-inner {
   position: relative;
