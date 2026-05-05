@@ -1,169 +1,123 @@
 import { useEffect } from "react";
 
-  const BASE = import.meta.env.BASE_URL;
-  const SLIDE_W = 794;
-  const SLIDE_H = 1123;
+const BASE = import.meta.env.BASE_URL;
+const SLIDE_W = 794;
+const SLIDE_H = 1123;
 
-  export default function Home() {
-    useEffect(() => {
-      const root = document.documentElement;
-      const update = () => {
-        const vw = window.innerWidth;
-        const targetW = Math.max(320, Math.min(vw - 32, SLIDE_W));
-        const scale = Math.max(0.1, targetW / SLIDE_W);
-        root.style.setProperty('--slide-scale', String(scale));
-      };
-      update();
-      window.addEventListener('resize', update);
-      return () => window.removeEventListener('resize', update);
-    }, []);
+type VideoOverlay = {
+  src: string;
+  poster: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
 
-    return (
-      <main className="portfolio-root" data-testid="portfolio-page">
-        <style>{`
-          .portfolio-root {
-            background: #F4F1EB;
-            min-height: 100vh;
-            padding: 32px 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 32px;
-            font-family: 'Unbounded', 'Inter', system-ui, sans-serif;
-          }
-          .slide-frame {
-            position: relative;
-            width: ${SLIDE_W}px;
-            height: ${SLIDE_H}px;
-            background: #F4F1EB;
-            box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25), 0 18px 36px -18px rgba(20,18,16,0.18);
-            transform-origin: top center;
-            transform: scale(var(--slide-scale, 1));
-            margin-bottom: calc((var(--slide-scale, 1) - 1) * ${SLIDE_H}px);
-            overflow: hidden;
-            border-radius: 2px;
-          }
-          .slide-frame video::-webkit-media-controls-panel { background: rgba(0,0,0,0.55); }
-        `}</style>
+const SLIDE_2_VIDEOS: VideoOverlay[] = [
+  { src: "media1.mp4", poster: "image6.png", x: 269, y: 187, w: 123, h: 219 },
+  { src: "media2.mp4", poster: "image7.png", x: 516, y: 231, w: 221, h: 393 },
+  { src: "media3.mp4", poster: "image8.png", x: 333, y: 810, w: 140, h: 229 },
+];
 
-        {/* SLIDE 1 */}
+export default function Home() {
+  useEffect(() => {
+    const root = document.documentElement;
+    const update = () => {
+      const vw = window.innerWidth;
+      const targetW = Math.max(320, Math.min(vw - 32, SLIDE_W));
+      const scale = Math.max(0.1, targetW / SLIDE_W);
+      root.style.setProperty("--slide-scale", String(scale));
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return (
+    <main className="portfolio-root" data-testid="portfolio-page">
+      <style>{`
+        .portfolio-root {
+          background: #F4F1EB;
+          min-height: 100vh;
+          padding: 32px 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 32px;
+          font-family: 'Unbounded', 'Inter', system-ui, sans-serif;
+        }
+        .slide-frame {
+          position: relative;
+          width: ${SLIDE_W}px;
+          height: ${SLIDE_H}px;
+          background: #F4F1EB;
+          box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25), 0 18px 36px -18px rgba(20,18,16,0.18);
+          transform-origin: top center;
+          transform: scale(var(--slide-scale, 1));
+          margin-bottom: calc((var(--slide-scale, 1) - 1) * ${SLIDE_H}px);
+          overflow: hidden;
+          border-radius: 2px;
+        }
+        .slide-bg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          user-select: none;
+          pointer-events: none;
+        }
+        .video-overlay {
+          position: absolute;
+          object-fit: cover;
+          background: #000;
+          z-index: 2;
+        }
+        .slide-frame video::-webkit-media-controls-panel { background: rgba(0,0,0,0.55); }
+      `}</style>
+
       <section className="slide-frame" data-testid="slide-1">
-        <img key="0-0" src={`${BASE}image1.png`} alt="" style={{position:'absolute',left:552,top:51,width:14,height:13,objectFit:'cover'}} data-testid="img-image1-png-0-0" />
-        <img key="0-1" src={`${BASE}image1.png`} alt="" style={{position:'absolute',left:416,top:1065,width:14,height:13,objectFit:'cover'}} data-testid="img-image1-png-0-1" />
-        <div key="0-2" style={{position:'absolute',left:54,top:78,width:686,height:1,background:'#CCC7BC'}} />
-        <div key="0-3" style={{position:'absolute',left:54,top:52,width:267,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"AI VISUAL CREATOR · PORTFOLIO MMXXVI"}</span></div></div>
-        <div key="0-4" style={{position:'absolute',left:690,top:52,width:58,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"01 / 03"}</span></div></div>
-        <div key="0-5" style={{position:'absolute',left:54,top:89,width:482,height:109,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'63px',color:'#151210',fontWeight:400,lineHeight:'66.15px',whiteSpace:'pre',letterSpacing:'-0.030em'}}>{"KRISTINA"}</span></div></div>
-        <div key="0-6" style={{position:'absolute',left:54,top:178,width:707,height:56,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'45px',color:'#E03018',fontWeight:400,lineHeight:'47.25px',whiteSpace:'pre',letterSpacing:'0.050em'}}>{"ERMILOVA"}</span></div></div>
-        <div key="0-7" style={{position:'absolute',left:54,top:281,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-8" style={{position:'absolute',left:54,top:250,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-9" style={{position:'absolute',left:54,top:260,width:240,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"КОММЕРЧЕСКИЕ КАМПАНИИ"}</span></div></div>
-        <div key="0-10" style={{position:'absolute',left:365,top:263,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"01"}</span></div></div>
-        <div key="0-11" style={{position:'absolute',left:417,top:281,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-12" style={{position:'absolute',left:417,top:250,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-13" style={{position:'absolute',left:417,top:260,width:185,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"ЛУКБУКИ И EDITORIAL"}</span></div></div>
-        <div key="0-14" style={{position:'absolute',left:728,top:263,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"02"}</span></div></div>
-        <div key="0-15" style={{position:'absolute',left:54,top:312,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-16" style={{position:'absolute',left:54,top:291,width:227,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"AI-ПЕРСОНАЖИ И АВАТАРЫ"}</span></div></div>
-        <div key="0-17" style={{position:'absolute',left:365,top:294,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"03"}</span></div></div>
-        <div key="0-18" style={{position:'absolute',left:417,top:312,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-19" style={{position:'absolute',left:417,top:291,width:192,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"ПРЕДМЕТНАЯ СЪЁМКА"}</span></div></div>
-        <div key="0-20" style={{position:'absolute',left:728,top:294,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"04"}</span></div></div>
-        <div key="0-21" style={{position:'absolute',left:54,top:343,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-22" style={{position:'absolute',left:54,top:322,width:225,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"AI-ВИДЕО И MICRO-MOTION"}</span></div></div>
-        <div key="0-23" style={{position:'absolute',left:365,top:325,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"05"}</span></div></div>
-        <div key="0-24" style={{position:'absolute',left:417,top:343,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-25" style={{position:'absolute',left:417,top:322,width:270,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"КОНЦЕПТЫ И ВИЗУАЛ. СИСТЕМЫ"}</span></div></div>
-        <div key="0-26" style={{position:'absolute',left:728,top:325,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"06"}</span></div></div>
-        <div key="0-27" style={{position:'absolute',left:54,top:374,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-28" style={{position:'absolute',left:54,top:353,width:251,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"СТИЛИЗАЦИЯ ПОД РЕФЕРЕНС"}</span></div></div>
-        <div key="0-29" style={{position:'absolute',left:365,top:356,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"07"}</span></div></div>
-        <div key="0-30" style={{position:'absolute',left:417,top:374,width:323,height:1,background:'#CCC7BC'}} />
-        <div key="0-31" style={{position:'absolute',left:417,top:353,width:213,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'8px',color:'#151210',fontWeight:400,lineHeight:'8.4px',whiteSpace:'pre',letterSpacing:'0.068em'}}>{"КОНТЕНТ ДЛЯ СОЦСЕТЕЙ"}</span></div></div>
-        <div key="0-32" style={{position:'absolute',left:728,top:356,width:20,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#E03018',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"08"}</span></div></div>
-        <div key="0-33" style={{position:'absolute',left:54,top:966,width:391,height:56,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'31.5px',color:'#151210',fontWeight:700,lineHeight:'33.075px',whiteSpace:'pre',letterSpacing:'-0.020em'}}>{"ВИЗУАЛЬНЫЙ"}</span></div></div>
-        <div key="0-34" style={{position:'absolute',left:54,top:1011,width:707,height:42,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'31.5px',color:'#E03018',fontWeight:700,lineHeight:'33.075px',whiteSpace:'pre',letterSpacing:'-0.020em'}}>{"ЯЗЫК БРЕНДА"}</span></div></div>
-        <div key="0-35" style={{position:'absolute',left:54,top:1049,width:686,height:1,background:'#CCC7BC'}} />
-        <div key="0-36" style={{position:'absolute',left:54,top:1065,width:123,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"@ATELIER.DE.KIKI"}</span></div></div>
-        <div key="0-37" style={{position:'absolute',left:668,top:1065,width:80,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"@KIKIKI_ME"}</span></div></div>
-        <div key="0-38" style={{position:'absolute',left:606,top:557,width:174,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#9A9088',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.300em'}}>{"VISUAL CREATOR · MOSCOW"}</span></div></div>
+        <img
+          className="slide-bg"
+          src={`${BASE}slide-1.png`}
+          alt="Slide 1"
+          draggable={false}
+          data-testid="img-slide-1"
+        />
       </section>
 
-      {/* SLIDE 2 */}
       <section className="slide-frame" data-testid="slide-2">
-        <img key="1-0" src={`${BASE}image2.jpeg`} alt="" style={{position:'absolute',left:54,top:94,width:244,height:378,objectFit:'cover'}} data-testid="img-image2-jpeg-1-0" />
-        <img key="1-1" src={`${BASE}image3.jpeg`} alt="" style={{position:'absolute',left:330,top:467,width:167,height:277,objectFit:'cover'}} data-testid="img-image3-jpeg-1-1" />
-        <img key="1-2" src={`${BASE}image4.jpeg`} alt="" style={{position:'absolute',left:135,top:810,width:140,height:229,objectFit:'cover'}} data-testid="img-image4-jpeg-1-2" />
-        <img key="1-3" src={`${BASE}image5.jpeg`} alt="" style={{position:'absolute',left:532,top:810,width:140,height:229,objectFit:'cover'}} data-testid="img-image5-jpeg-1-3" />
-        <video key="1-4" src={`${BASE}media1.mp4`} poster={`${BASE}image6.png`} controls playsInline preload="metadata" style={{position:'absolute',left:269,top:187,width:123,height:219,objectFit:'cover',background:'#000'}} data-testid="video-media1-mp4-1-4" />
-        <video key="1-5" src={`${BASE}media2.mp4`} poster={`${BASE}image7.png`} controls playsInline preload="metadata" style={{position:'absolute',left:516,top:231,width:221,height:393,objectFit:'cover',background:'#000'}} data-testid="video-media2-mp4-1-5" />
-        <video key="1-6" src={`${BASE}media3.mp4`} poster={`${BASE}image8.png`} controls playsInline preload="metadata" style={{position:'absolute',left:333,top:810,width:140,height:229,objectFit:'cover',background:'#000'}} data-testid="video-media3-mp4-1-6" />
-        <img key="1-7" src={`${BASE}image1.png`} alt="" style={{position:'absolute',left:552,top:51,width:14,height:13,objectFit:'cover'}} data-testid="img-image1-png-1-7" />
-        <div key="1-8" style={{position:'absolute',left:54,top:78,width:686,height:1,background:'#CCC7BC'}} />
-        <div key="1-9" style={{position:'absolute',left:54,top:52,width:138,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"I · SELECTED WORKS"}</span></div></div>
-        <div key="1-10" style={{position:'absolute',left:690,top:52,width:58,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"02 / 03"}</span></div></div>
-        <div key="1-12" style={{position:'absolute',left:55,top:485,width:243,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · INSPIRO"}</span></div></div>
-        <div key="1-13" style={{position:'absolute',left:54,top:497,width:220,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"INSPIRO"}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{" "}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"— BOTANICAL LAB"}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{" "}</span></div></div>
-        <div key="1-14" style={{position:'absolute',left:54,top:510,width:202,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"Продуктовый"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{" "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"лайфстайл"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{" "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"· sound design"}</span></div><div key={1} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"  "}</span></div></div>
-        <div key="1-15" style={{position:'absolute',left:516,top:639,width:221,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · STAYA"}</span></div></div>
-        <div key="1-16" style={{position:'absolute',left:516,top:651,width:232,height:27,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"STAYA— "}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"С"}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"ONNECTION YOU CAN TRUST"}</span></div></div>
-        <div key="1-17" style={{position:'absolute',left:516,top:669,width:222,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Продуктовая съёмка · "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"аксессуары"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"· sound design"}</span></div></div>
-        <div key="1-18" style={{position:'absolute',left:135,top:1055,width:140,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · OPU"}</span></div></div>
-        <div key="1-19" style={{position:'absolute',left:135,top:1066,width:162,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"NATURAL TEXTURES"}</span></div></div>
-        <div key="1-20" style={{position:'absolute',left:137,top:1078,width:138,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Идея"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · AI-модель · продукт"}</span></div></div>
-        <div key="1-21" style={{position:'absolute',left:333,top:1055,width:230,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · OPU"}</span></div></div>
-        <div key="1-22" style={{position:'absolute',left:333,top:1067,width:230,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"NEW PRODUCTS"}</span></div></div>
-        <div key="1-23" style={{position:'absolute',left:333,top:1078,width:138,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Кампейн · "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"so"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"und design"}</span></div></div>
-        <div key="1-24" style={{position:'absolute',left:532,top:1055,width:132,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · OPU"}</span></div></div>
-        <div key="1-25" style={{position:'absolute',left:532,top:1066,width:132,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"ATMOSPHERE"}</span></div></div>
-        <div key="1-26" style={{position:'absolute',left:532,top:1077,width:132,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Атмосфера"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · продукт"}</span></div></div>
-        <div key="1-27" style={{position:'absolute',left:430,top:814,width:46,height:14,background:'#E03018'}} />
-        <div key="1-28" style={{position:'absolute',left:431,top:816,width:41,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.25px',color:'#FFFFFF',fontWeight:400,lineHeight:'5.5125px',whiteSpace:'pre',letterSpacing:'0.181em'}}>{"▶ VIDEO"}</span></div></div>
-        <div key="1-29" style={{position:'absolute',left:329,top:756,width:230,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · STAYA"}</span></div></div>
-        <div key="1-30" style={{position:'absolute',left:329,top:767,width:226,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"MADE FOR DOGS"}</span></div></div>
-        <div key="1-31" style={{position:'absolute',left:329,top:778,width:230,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Идея "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"· "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Кампейн"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · AI-"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"персонажи"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" "}</span></div></div>
-        <div key="1-32" style={{position:'absolute',left:269,top:415,width:200,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"BRAND CAMPAIGN · INSPIRO"}</span></div></div>
-        <div key="1-33" style={{position:'absolute',left:268,top:424,width:192,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"INSPIRO — BOTANICAL LAB"}</span></div></div>
-        <div key="1-34" style={{position:'absolute',left:269,top:434,width:151,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"Идея"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"· "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'24px',color:'#9A9088',fontWeight:400,lineHeight:'25.200000000000003px',whiteSpace:'pre'}}>{"Кампэйн"}</span></div><div key={1} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"  "}</span></div></div>
-        <div key="1-35" style={{position:'absolute',left:346,top:169,width:46,height:14,background:'#E03018'}} />
-        <div key="1-36" style={{position:'absolute',left:346,top:171,width:41,height:12,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.25px',color:'#FFFFFF',fontWeight:400,lineHeight:'5.5125px',whiteSpace:'pre',letterSpacing:'0.181em'}}>{"▶ VIDEO"}</span></div></div>
+        <img
+          className="slide-bg"
+          src={`${BASE}slide-2.png`}
+          alt="Slide 2"
+          draggable={false}
+          data-testid="img-slide-2"
+        />
+        {SLIDE_2_VIDEOS.map((v, i) => (
+          <video
+            key={`video-${i}`}
+            className="video-overlay"
+            src={`${BASE}${v.src}`}
+            poster={`${BASE}${v.poster}`}
+            controls
+            playsInline
+            preload="metadata"
+            style={{ left: v.x, top: v.y, width: v.w, height: v.h }}
+            data-testid={`video-${v.src.replace(/\./g, "-")}`}
+          />
+        ))}
       </section>
 
-      {/* SLIDE 3 */}
       <section className="slide-frame" data-testid="slide-3">
-        <img key="2-0" src={`${BASE}image9.jpeg`} alt="" style={{position:'absolute',left:54,top:94,width:184,height:327,objectFit:'cover'}} data-testid="img-image9-jpeg-2-0" />
-        <img key="2-1" src={`${BASE}image10.png`} alt="" style={{position:'absolute',left:454,top:188,width:286,height:142,objectFit:'cover'}} data-testid="img-image10-png-2-1" />
-        <img key="2-2" src={`${BASE}image11.png`} alt="" style={{position:'absolute',left:109,top:546,width:388,height:295,objectFit:'cover'}} data-testid="img-image11-png-2-2" />
-        <img key="2-3" src={`${BASE}image12.jpeg`} alt="" style={{position:'absolute',left:249,top:94,width:184,height:327,objectFit:'cover'}} data-testid="img-image12-jpeg-2-3" />
-        <img key="2-4" src={`${BASE}image13.png`} alt="" style={{position:'absolute',left:392,top:640,width:192,height:144,objectFit:'cover'}} data-testid="img-image13-png-2-4" />
-        <img key="2-5" src={`${BASE}image1.png`} alt="" style={{position:'absolute',left:552,top:51,width:14,height:13,objectFit:'cover'}} data-testid="img-image1-png-2-5" />
-        <div key="2-6" style={{position:'absolute',left:54,top:78,width:686,height:1,background:'#CCC7BC'}} />
-        <div key="2-7" style={{position:'absolute',left:54,top:52,width:195,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"II · LOOKBOOKS & PORTRAITS"}</span></div></div>
-        <div key="2-8" style={{position:'absolute',left:690,top:52,width:58,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6.75px',color:'#9A9088',fontWeight:400,lineHeight:'7.0875px',whiteSpace:'pre',letterSpacing:'0.200em'}}>{"03 / 03"}</span></div></div>
-        <div key="2-9" style={{position:'absolute',left:457,top:344,width:283,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"LOOKBOOK · CAPSULE"}</span></div></div>
-        <div key="2-10" style={{position:'absolute',left:457,top:355,width:283,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"THE ASYMMETRIC ENSEMBLE"}</span></div></div>
-        <div key="2-11" style={{position:'absolute',left:457,top:369,width:283,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"AI-"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"лукбук"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · капсула"}</span></div></div>
-        <div key="2-12" style={{position:'absolute',left:109,top:855,width:388,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"LOOKBOOK · JEWELLERY"}</span></div></div>
-        <div key="2-13" style={{position:'absolute',left:109,top:867,width:388,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"GOLD & PERIDOT SET"}</span></div></div>
-        <div key="2-14" style={{position:'absolute',left:109,top:880,width:388,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Ювелирный "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"лукбук"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · AI-"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"модель"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"· 1:1 точность"}</span></div></div>
-        <div key="2-15" style={{position:'absolute',left:54,top:451,width:348,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"FLAT LAY STUDY"}</span></div></div>
-        <div key="2-16" style={{position:'absolute',left:54,top:439,width:348,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"LOOKBOOK · EDITORIAL              "}</span></div></div>
-        <div key="2-17" style={{position:'absolute',left:249,top:453,width:348,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"OLIVE DUO"}</span></div></div>
-        <div key="2-18" style={{position:'absolute',left:44,top:1039,width:686,height:1,background:'#CCC7BC'}} />
-        <div key="2-19" style={{position:'absolute',left:44,top:1054,width:266,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#9A9088',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"АВТОР"}</span></div></div>
-        <div key="2-20" style={{position:'absolute',left:44,top:1069,width:266,height:26,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'13.5px',color:'#151210',fontWeight:400,lineHeight:'14.175px',whiteSpace:'pre',letterSpacing:'0.010em'}}>{"Kristina Ermilova"}</span></div></div>
-        <div key="2-21" style={{position:'absolute',left:315,top:1054,width:137,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#9A9088',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"TELEGRAM"}</span></div></div>
-        <div key="2-22" style={{position:'absolute',left:315,top:1068,width:137,height:20,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9.75px',color:'#E03018',fontWeight:400,lineHeight:'10.2375px',whiteSpace:'pre',letterSpacing:'0.010em'}}>{"@Kikiki_me"}</span></div></div>
-        <div key="2-23" style={{position:'absolute',left:458,top:1054,width:137,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#9A9088',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"INSTAGRAM"}</span></div></div>
-        <div key="2-24" style={{position:'absolute',left:458,top:1068,width:137,height:20,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9.75px',color:'#E03018',fontWeight:400,lineHeight:'10.2375px',whiteSpace:'pre',letterSpacing:'0.010em'}}>{"atelier.de.kiki"}</span></div></div>
-        <div key="2-25" style={{position:'absolute',left:619,top:1054,width:137,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'6px',color:'#9A9088',fontWeight:400,lineHeight:'6.300000000000001px',whiteSpace:'pre',letterSpacing:'0.180em'}}>{"EMAIL"}</span></div></div>
-        <div key="2-26" style={{position:'absolute',left:619,top:1070,width:137,height:16,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'7.5px',color:'#151210',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre',letterSpacing:'0.011em'}}>{"palokris@gmail.com"}</span></div></div>
-        <div key="2-27" style={{position:'absolute',left:54,top:464,width:348,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"AI-"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"лукбук"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{" · AI-"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"модел"}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"и"}</span></div></div>
-        <div key="2-28" style={{position:'absolute',left:392,top:784,width:192,height:14,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'JetBrains Mono', monospace",fontSize:'5.63px',color:'#E03018',fontWeight:400,lineHeight:'5.9115px',whiteSpace:'pre',letterSpacing:'0.140em'}}>{"LOOKBOOK · JEWELLERY"}</span></div></div>
-        <div key="2-29" style={{position:'absolute',left:392,top:793,width:192,height:19,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"GECKO DETAI"}</span><span style={{fontFamily:"'Unbounded', sans-serif",fontSize:'9px',color:'#151210',fontWeight:400,lineHeight:'9.450000000000001px',whiteSpace:'pre',letterSpacing:'0.020em'}}>{"L"}</span></div></div>
-        <div key="2-30" style={{position:'absolute',left:392,top:805,width:161,height:18,display:'flex',flexDirection:'column',justifyContent:'flex-start'}}><div key={0} style={{textAlign:'left'}}><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"Предметная съемка "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"· "}</span><span style={{fontFamily:"'Onest', sans-serif",fontSize:'7.5px',color:'#9A9088',fontWeight:400,lineHeight:'7.875px',whiteSpace:'pre'}}>{"детальный план"}</span></div></div>
+        <img
+          className="slide-bg"
+          src={`${BASE}slide-3.png`}
+          alt="Slide 3"
+          draggable={false}
+          data-testid="img-slide-3"
+        />
       </section>
-      </main>
-    );
-  }
-  
+    </main>
+  );
+}
