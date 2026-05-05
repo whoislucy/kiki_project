@@ -310,6 +310,7 @@ export default function Home() {
                     src={`${BASE}${v.src}`}
                     poster={`${BASE}${v.poster}`}
                     controls
+                    muted
                     playsInline
                     preload="metadata"
                     data-testid={`video-${v.src.replace(/\./g, "-")}`}
@@ -446,6 +447,7 @@ export default function Home() {
                   src={`${BASE}${lightboxCard.video}`}
                   poster={`${BASE}${lightboxCard.image}`}
                   controls
+                  muted
                   autoPlay
                   playsInline
                   data-testid="lightbox-video"
@@ -605,6 +607,7 @@ export default function Home() {
                 src={`${BASE}${lightboxCard.video}`}
                 poster={`${BASE}${lightboxCard.image}`}
                 controls
+                muted
                 autoPlay
                 playsInline
                 data-testid="lightbox-video"
