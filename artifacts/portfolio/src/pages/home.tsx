@@ -659,11 +659,11 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 
 /* DESKTOP — original PNG-based slides (matches deployed version) */
 .portfolio-desktop {
-  padding: 24px 16px 96px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 0;
 }
 .slide-frame {
   position: relative;
@@ -671,10 +671,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   max-width: ${SLIDE_W}px;
   aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
   background: #F4F1EB;
-  box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25),
-              0 18px 36px -18px rgba(20,18,16,0.18);
   overflow: hidden;
-  border-radius: 2px;
 }
 .slide-bg {
   position: absolute;
