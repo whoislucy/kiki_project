@@ -984,26 +984,32 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 .card-img-btn:hover .card-img { transform: scale(1.04); }
 .card-zoom-hint {
   position: absolute;
-  bottom: 8px;
+  top: 8px;
   right: 8px;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(20,18,16,0.72);
+  background: rgba(20,18,16,0.78);
   color: #fff;
   font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
   pointer-events: none;
   backdrop-filter: blur(6px);
 }
 .card-img-btn:hover .card-zoom-hint,
-.card-img-btn:focus-visible .card-zoom-hint { opacity: 1; }
+.card-img-btn:focus-visible .card-zoom-hint {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.card-zoom-hint:hover { background: #E03018; }
 @media (hover: none) and (pointer: coarse) {
-  .card-zoom-hint { opacity: 1; }
+  .card-zoom-hint { opacity: 1; transform: translateY(0); }
 }
 
 .lightbox {
