@@ -320,7 +320,6 @@ export default function Home() {
                       className="video-zoom-btn"
                       onClick={() => openLightbox(card)}
                       aria-label={`Открыть ${card.title} на весь экран`}
-                      title={card.title}
                       data-testid={`video-zoom-${card.id}`}
                     >⤢</button>
                   )}
@@ -335,7 +334,6 @@ export default function Home() {
                 target={l.href.startsWith("mailto:") ? undefined : "_blank"}
                 rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
                 aria-label={l.label}
-                title={l.label}
                 style={styleFor(l)}
                 data-testid={`link-s${slide.num}-${i}`}
               />
@@ -349,7 +347,6 @@ export default function Home() {
                   className="photo-overlay"
                   onClick={() => card && openLightbox(card)}
                   aria-label={card ? `Открыть ${card.title} на весь экран` : "Открыть фото"}
-                  title={card?.title}
                   style={styleFor(p)}
                   data-testid={`photo-${p.cardId}`}
                 >
