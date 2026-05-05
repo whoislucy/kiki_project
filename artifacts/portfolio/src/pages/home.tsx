@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-
 const BASE = import.meta.env.BASE_URL;
 const SLIDE_W = 794;
 const SLIDE_H = 1123;
+
+const pct = (n: number, total: number) => `${(n / total) * 100}%`;
 
 type VideoOverlay = {
   src: string;
@@ -39,42 +39,37 @@ const SLIDE_3_LINKS: LinkOverlay[] = [
   { href: "mailto:palokris@gmail.com", label: "Email palokris@gmail.com", x: 619, y: 1066, w: 145, h: 24 },
 ];
 
-export default function Home() {
-  useEffect(() => {
-    const root = document.documentElement;
-    const update = () => {
-      const vw = window.innerWidth;
-      const targetW = Math.max(320, Math.min(vw - 32, SLIDE_W));
-      const scale = Math.max(0.1, targetW / SLIDE_W);
-      root.style.setProperty("--slide-scale", String(scale));
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
+function styleFor(o: { x: number; y: number; w: number; h: number }) {
+  return {
+    left: pct(o.x, SLIDE_W),
+    top: pct(o.y, SLIDE_H),
+    width: pct(o.w, SLIDE_W),
+    height: pct(o.h, SLIDE_H),
+  };
+}
 
+export default function Home() {
   return (
     <main className="portfolio-root" data-testid="portfolio-page">
       <style>{`
         .portfolio-root {
           background: #F4F1EB;
           min-height: 100vh;
-          padding: 32px 16px;
+          padding: 24px 16px;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 32px;
+          gap: 24px;
           font-family: 'Unbounded', 'Inter', system-ui, sans-serif;
         }
         .slide-frame {
           position: relative;
-          width: ${SLIDE_W}px;
-          height: ${SLIDE_H}px;
+          width: 100%;
+          max-width: ${SLIDE_W}px;
+          aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
           background: #F4F1EB;
-          box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25), 0 18px 36px -18px rgba(20,18,16,0.18);
-          transform-origin: top center;
-          transform: scale(var(--slide-scale, 1));
-          margin-bottom: calc((var(--slide-scale, 1) - 1) * ${SLIDE_H}px);
+          box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25),
+                      0 18px 36px -18px rgba(20,18,16,0.18);
           overflow: hidden;
           border-radius: 2px;
         }
@@ -86,14 +81,15 @@ export default function Home() {
           object-fit: cover;
           user-select: none;
           pointer-events: none;
+          display: block;
         }
         .video-overlay {
           position: absolute;
           object-fit: cover;
           background: #000;
           z-index: 2;
+          display: block;
         }
-        .slide-frame video::-webkit-media-controls-panel { background: rgba(0,0,0,0.55); }
         .link-overlay {
           position: absolute;
           z-index: 3;
@@ -101,9 +97,21 @@ export default function Home() {
           background: transparent;
           border-radius: 4px;
           transition: background-color 0.15s ease;
+          -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
         }
         .link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
         .link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
+
+        @media (max-width: 640px) {
+          .portfolio-root { padding: 12px 8px; gap: 16px; }
+          .slide-frame { border-radius: 1px;
+            box-shadow: 0 12px 24px -10px rgba(20,18,16,0.18),
+                        0 6px 14px -8px rgba(20,18,16,0.14); }
+        }
+
+        @media (max-width: 380px) {
+          .portfolio-root { padding: 8px 4px; gap: 12px; }
+        }
       `}</style>
 
       <section className="slide-frame" data-testid="slide-1">
@@ -123,7 +131,7 @@ export default function Home() {
             rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
             aria-label={l.label}
             title={l.label}
-            style={{ left: l.x, top: l.y, width: l.w, height: l.h }}
+            style={styleFor(l)}
             data-testid={`link-s1-${i}`}
           />
         ))}
@@ -146,7 +154,7 @@ export default function Home() {
             controls
             playsInline
             preload="metadata"
-            style={{ left: v.x, top: v.y, width: v.w, height: v.h }}
+            style={styleFor(v)}
             data-testid={`video-${v.src.replace(/\./g, "-")}`}
           />
         ))}
@@ -169,7 +177,7 @@ export default function Home() {
             rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
             aria-label={l.label}
             title={l.label}
-            style={{ left: l.x, top: l.y, width: l.w, height: l.h }}
+            style={styleFor(l)}
             data-testid={`link-s3-${i}`}
           />
         ))}
