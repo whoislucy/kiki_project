@@ -142,14 +142,41 @@ export default function Home() {
   const isDesktop = useIsDesktop();
   const [activeSlide, setActiveSlide] = useState(1);
   const [lightboxCard, setLightboxCard] = useState<WorkCard | null>(null);
+  const [zoomedSlide, setZoomedSlide] = useState<number | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
   const lightboxCloseRef = useRef<HTMLButtonElement | null>(null);
+  const slideZoomCloseRef = useRef<HTMLButtonElement | null>(null);
   const openerRef = useRef<HTMLElement | null>(null);
 
   const openLightbox = (card: WorkCard) => {
     openerRef.current = (document.activeElement as HTMLElement) ?? null;
     setLightboxCard(card);
   };
+
+  const openSlideZoom = (num: number) => {
+    openerRef.current = (document.activeElement as HTMLElement) ?? null;
+    setZoomedSlide(num);
+  };
+
+  useEffect(() => {
+    if (zoomedSlide === null) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const focusTimer = window.setTimeout(() => slideZoomCloseRef.current?.focus(), 0);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setZoomedSlide(null); return; }
+      if (e.key === "Tab") { e.preventDefault(); slideZoomCloseRef.current?.focus(); }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = original;
+      window.clearTimeout(focusTimer);
+      window.removeEventListener("keydown", onKey);
+      const opener = openerRef.current;
+      if (opener && document.contains(opener)) opener.focus();
+      openerRef.current = null;
+    };
+  }, [zoomedSlide]);
 
   useEffect(() => {
     if (!lightboxCard) return;
@@ -244,8 +271,47 @@ export default function Home() {
                 data-testid={`link-s${slide.num}-${i}`}
               />
             ))}
+            <button
+              type="button"
+              className="zoom-btn"
+              onClick={() => openSlideZoom(slide.num)}
+              aria-label={`Открыть слайд ${slide.num} на весь экран`}
+              data-testid={`zoom-btn-${slide.num}`}
+            >
+              ⤢
+            </button>
           </section>
         ))}
+
+        {zoomedSlide !== null && (
+          <div
+            className="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Слайд ${zoomedSlide} увеличенный`}
+            onClick={(e) => { if (e.target === e.currentTarget) setZoomedSlide(null); }}
+            data-testid="slide-lightbox"
+          >
+            <button
+              ref={slideZoomCloseRef}
+              type="button"
+              className="lightbox-close"
+              onClick={() => setZoomedSlide(null)}
+              aria-label="Закрыть"
+              data-testid="slide-lightbox-close"
+            >
+              ×
+            </button>
+            <div className="slide-lightbox-inner" onClick={(e) => e.stopPropagation()}>
+              <img
+                className="slide-lightbox-img"
+                src={`${BASE}slide-${zoomedSlide}.png`}
+                alt={`Slide ${zoomedSlide} fullscreen`}
+                data-testid={`slide-lightbox-img-${zoomedSlide}`}
+              />
+            </div>
+          </div>
+        )}
 
         <nav className="nav-dots" aria-label="Навигация по слайдам">
           <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
@@ -469,6 +535,47 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 .link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
 .link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
 
+.zoom-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(20,18,16,0.72);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  -webkit-tap-highlight-color: transparent;
+  padding: 0;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+.slide-frame:hover .zoom-btn,
+.zoom-btn:focus-visible { opacity: 1; }
+.zoom-btn:hover { background: rgba(224, 48, 24, 0.92); }
+.zoom-btn:active { transform: scale(0.94); }
+
+.slide-lightbox-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  padding: 56px 0 24px;
+  margin: 0 auto;
+}
+.slide-lightbox-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
 .slide {
   max-width: 1200px;
   margin: 0 auto;
@@ -678,7 +785,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   z-index: 100;
   background: rgba(20,18,16,0.94);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   padding: 56px 16px 24px;
   overflow: auto;
