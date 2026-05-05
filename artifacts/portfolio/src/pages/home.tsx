@@ -646,10 +646,10 @@ export default function Home() {
 
 const styles = `
 :root { color-scheme: light; }
-html, body { margin: 0; padding: 0; background: #EEEBE5; }
+html, body { margin: 0; padding: 0; background: #F4F1EB; }
 
 .portfolio-root {
-  background: #EEEBE5;
+  background: #F4F1EB;
   min-height: 100vh;
   font-family: 'Onest', 'Inter', system-ui, sans-serif;
   color: #151210;
@@ -659,20 +659,22 @@ html, body { margin: 0; padding: 0; background: #EEEBE5; }
 
 /* DESKTOP — original PNG-based slides (matches deployed version) */
 .portfolio-desktop {
-  padding: 0;
+  padding: 24px 16px 96px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
-  background: #EEEBE5;
+  gap: 24px;
 }
 .slide-frame {
   position: relative;
   width: 100%;
   max-width: ${SLIDE_W}px;
   aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
-  background: #EEEBE5;
+  background: #F4F1EB;
+  box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25),
+              0 18px 36px -18px rgba(20,18,16,0.18);
   overflow: hidden;
+  border-radius: 2px;
 }
 .slide-bg {
   position: absolute;
@@ -1062,7 +1064,7 @@ html, body { margin: 0; padding: 0; background: #EEEBE5; }
   display: flex;
   flex-direction: column;
   gap: 4px;
-  color: #EEEBE5;
+  color: #F4F1EB;
   text-align: left;
 }
 .lightbox-tag {
