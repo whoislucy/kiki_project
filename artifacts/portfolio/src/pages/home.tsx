@@ -18,18 +18,18 @@ const SLIDE_2_VIDEOS: VideoOverlay[] = [
 ];
 
 const SLIDE_2_PHOTOS: PhotoOverlay[] = [
-  { cardId: "w1", x: 54, y: 93, w: 215, h: 378 },
-  { cardId: "w4", x: 329, y: 466, w: 167, h: 278 },
-  { cardId: "w5", x: 135, y: 809, w: 140, h: 230 },
-  { cardId: "w7", x: 531, y: 810, w: 141, h: 230 },
+  { cardId: "w1", x: 54, y: 93, w: 213, h: 389 },
+  { cardId: "w4", x: 329, y: 460, w: 170, h: 290 },
+  { cardId: "w5", x: 137, y: 806, w: 137, h: 233 },
+  { cardId: "w7", x: 532, y: 806, w: 140, h: 230 },
 ];
 
 const SLIDE_3_PHOTOS: PhotoOverlay[] = [
-  { cardId: "l1", x: 53, y: 93, w: 184, h: 328 },
-  { cardId: "l2", x: 249, y: 93, w: 184, h: 328 },
-  { cardId: "l3", x: 485, y: 202, w: 218, h: 112 },
-  { cardId: "l4", x: 109, y: 546, w: 475, h: 296 },
-  { cardId: "l5", x: 331, y: 620, w: 215, h: 160 },
+  { cardId: "l1", x: 54, y: 93, w: 183, h: 327 },
+  { cardId: "l2", x: 243, y: 93, w: 182, h: 327 },
+  { cardId: "l3", x: 439, y: 180, w: 315, h: 160 },
+  { cardId: "l4", x: 107, y: 544, w: 472, h: 300 },
+  { cardId: "l5", x: 329, y: 607, w: 250, h: 206 },
 ];
 
 const SLIDE_1_LINKS: LinkOverlay[] = [
@@ -704,10 +704,10 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 }
 .video-zoom-btn {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 28px;
-  height: 28px;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
   border: 0;
   border-radius: 50%;
   background: rgba(20, 18, 16, 0.78);
@@ -716,23 +716,20 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 14px;
   backdrop-filter: blur(6px);
   z-index: 4;
-  opacity: 0;
-  transform: translateY(-3px);
-  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
+  opacity: 0.85;
+  transition: opacity 0.18s ease, background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   padding: 0;
-  pointer-events: none;
 }
 .video-overlay-wrap:hover .video-zoom-btn,
+.video-zoom-btn:hover,
 .video-zoom-btn:focus-visible {
   opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  background: rgba(20, 18, 16, 0.92);
 }
-.video-zoom-btn:hover { background: rgba(224, 48, 24, 0.92); }
 .link-overlay {
   position: absolute;
   z-index: 3;
@@ -757,6 +754,7 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   outline: none;
   transition: background-color 0.18s ease, box-shadow 0.18s ease;
 }
+.photo-overlay * { cursor: zoom-in; }
 .photo-overlay:hover {
   background: rgba(20, 18, 16, 0.18);
   box-shadow: inset 0 0 0 1px rgba(244, 241, 235, 0.6);
