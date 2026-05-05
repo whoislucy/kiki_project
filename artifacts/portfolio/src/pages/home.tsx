@@ -25,11 +25,11 @@ const SLIDE_2_PHOTOS: PhotoOverlay[] = [
 ];
 
 const SLIDE_3_PHOTOS: PhotoOverlay[] = [
-  { cardId: "l1", x: 54, y: 93, w: 183, h: 327 },
-  { cardId: "l2", x: 243, y: 93, w: 182, h: 327 },
+  { cardId: "l1", x: 54, y: 93, w: 185, h: 327 },
+  { cardId: "l2", x: 245, y: 93, w: 180, h: 327 },
   { cardId: "l3", x: 439, y: 180, w: 315, h: 160 },
-  { cardId: "l4", x: 107, y: 544, w: 472, h: 300 },
-  { cardId: "l5", x: 329, y: 607, w: 250, h: 206 },
+  { cardId: "l4", x: 55, y: 544, w: 520, h: 305 },
+  { cardId: "l5", x: 330, y: 611, w: 245, h: 208 },
 ];
 
 const SLIDE_1_LINKS: LinkOverlay[] = [
