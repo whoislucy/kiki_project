@@ -755,12 +755,12 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 }
 .photo-overlay * { cursor: pointer; }
 .photo-overlay:hover {
-  background: rgba(20, 18, 16, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(244, 241, 235, 0.6);
+  background: transparent;
+  box-shadow: none;
 }
 .photo-overlay:focus-visible {
-  background: rgba(20, 18, 16, 0.22);
-  box-shadow: inset 0 0 0 2px #E03018;
+  background: transparent;
+  box-shadow: none;
 }
 .photo-overlay-hint {
   position: absolute;
