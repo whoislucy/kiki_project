@@ -720,17 +720,18 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   font-size: 14px;
   backdrop-filter: blur(6px);
   z-index: 4;
-  opacity: 0.85;
-  transition: opacity 0.18s ease, background 0.15s ease;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   padding: 0;
 }
 .video-overlay-wrap:hover .video-zoom-btn,
-.video-zoom-btn:hover,
 .video-zoom-btn:focus-visible {
   opacity: 1;
-  background: #E03018;
+  transform: translateY(0);
 }
+.video-zoom-btn:hover { background: #E03018; }
 .link-overlay {
   position: absolute;
   z-index: 3;
@@ -778,14 +779,15 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   justify-content: center;
   font-size: 14px;
   backdrop-filter: blur(6px);
-  opacity: 0.85;
-  transition: opacity 0.18s ease, background 0.15s ease;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease;
   pointer-events: none;
 }
 .photo-overlay:hover .photo-overlay-hint,
 .photo-overlay:focus-visible .photo-overlay-hint {
   opacity: 1;
-  background: #E03018;
+  transform: translateY(0);
 }
 
 .slide-lightbox-inner {
