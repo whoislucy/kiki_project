@@ -140,15 +140,6 @@ export default function Home() {
           <h2 className="big-tagline-2">ЯЗЫК БРЕНДА</h2>
         </div>
 
-        <footer className="slide-footer slide-1-footer">
-          <a className="mono-link" href="https://instagram.com/atelier.de.kiki" target="_blank" rel="noopener noreferrer" data-testid="footer-link-atelier">
-            @ATELIER.DE.KIKI
-          </a>
-          <span className="footer-asterisk">✱</span>
-          <a className="mono-link" href="https://t.me/Kikiki_me" target="_blank" rel="noopener noreferrer" data-testid="footer-link-kikiki">
-            @KIKIKI_ME
-          </a>
-        </footer>
       </section>
 
       <section
