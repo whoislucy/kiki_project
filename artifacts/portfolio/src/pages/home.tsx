@@ -2,6 +2,60 @@ import { useEffect, useRef, useState } from "react";
 
 const BASE = import.meta.env.BASE_URL;
 
+const SLIDE_W = 794;
+const SLIDE_H = 1123;
+const pct = (n: number, total: number) => `${(n / total) * 100}%`;
+
+type Overlay = { x: number; y: number; w: number; h: number };
+type VideoOverlay = Overlay & { src: string; poster: string };
+type LinkOverlay = Overlay & { href: string; label: string };
+
+const SLIDE_2_VIDEOS: VideoOverlay[] = [
+  { src: "media1.mp4", poster: "image6.png", x: 269, y: 187, w: 123, h: 219 },
+  { src: "media2.mp4", poster: "image7.png", x: 516, y: 231, w: 221, h: 393 },
+  { src: "media3.mp4", poster: "image8.png", x: 333, y: 810, w: 140, h: 229 },
+];
+
+const SLIDE_1_LINKS: LinkOverlay[] = [
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram @atelier.de.kiki", x: 54, y: 1063, w: 130, h: 22 },
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 668, y: 1063, w: 86, h: 22 },
+];
+
+const SLIDE_3_LINKS: LinkOverlay[] = [
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 315, y: 1066, w: 140, h: 24 },
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram atelier.de.kiki", x: 458, y: 1066, w: 140, h: 24 },
+  { href: "mailto:palokris@gmail.com", label: "Email palokris@gmail.com", x: 619, y: 1066, w: 145, h: 24 },
+];
+
+function styleFor(o: Overlay): React.CSSProperties {
+  return {
+    left: pct(o.x, SLIDE_W),
+    top: pct(o.y, SLIDE_H),
+    width: pct(o.w, SLIDE_W),
+    height: pct(o.h, SLIDE_H),
+  };
+}
+
+const PNG_SLIDES = [
+  { num: 1, src: "slide-1.png", videos: [] as VideoOverlay[], links: SLIDE_1_LINKS },
+  { num: 2, src: "slide-2.png", videos: SLIDE_2_VIDEOS, links: [] as LinkOverlay[] },
+  { num: 3, src: "slide-3.png", videos: [] as VideoOverlay[], links: SLIDE_3_LINKS },
+];
+
+function useIsDesktop(query = "(min-width: 768px)") {
+  const [match, setMatch] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia(query).matches;
+  });
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = (e: MediaQueryListEvent) => setMatch(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [query]);
+  return match;
+}
+
 const SERVICES = [
   "Коммерческие кампании",
   "Лукбуки и Editorial",
@@ -85,6 +139,7 @@ function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void 
 }
 
 export default function Home() {
+  const isDesktop = useIsDesktop();
   const [activeSlide, setActiveSlide] = useState(1);
   const [lightboxCard, setLightboxCard] = useState<WorkCard | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
@@ -139,12 +194,76 @@ export default function Home() {
       observers.push(obs);
     });
     return () => observers.forEach((o) => o.disconnect());
-  }, []);
+  }, [isDesktop]);
 
   const scrollToSlide = (idx: number) => {
     const el = slideRefs.current[idx];
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  if (isDesktop) {
+    return (
+      <main className="portfolio-root portfolio-desktop" data-testid="portfolio-page">
+        <style>{styles}</style>
+        {PNG_SLIDES.map((slide, idx) => (
+          <section
+            key={`png-slide-${slide.num}`}
+            ref={(el) => { slideRefs.current[idx] = el; }}
+            className="slide-frame"
+            data-testid={`slide-${slide.num}`}
+          >
+            <img
+              className="slide-bg"
+              src={`${BASE}${slide.src}`}
+              alt={`Slide ${slide.num}`}
+              draggable={false}
+            />
+            {slide.videos.map((v, i) => (
+              <video
+                key={`s${slide.num}-v-${i}`}
+                className="video-overlay"
+                src={`${BASE}${v.src}`}
+                poster={`${BASE}${v.poster}`}
+                controls
+                playsInline
+                preload="metadata"
+                style={styleFor(v)}
+                data-testid={`video-${v.src.replace(/\./g, "-")}`}
+              />
+            ))}
+            {slide.links.map((l, i) => (
+              <a
+                key={`s${slide.num}-l-${i}`}
+                className="link-overlay"
+                href={l.href}
+                target={l.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                aria-label={l.label}
+                title={l.label}
+                style={styleFor(l)}
+                data-testid={`link-s${slide.num}-${i}`}
+              />
+            ))}
+          </section>
+        ))}
+
+        <nav className="nav-dots" aria-label="Навигация по слайдам">
+          <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
+          {[1, 2, 3].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className="nav-dot"
+              data-active={activeSlide === n}
+              onClick={() => scrollToSlide(n - 1)}
+              aria-label={`Перейти к слайду ${n}`}
+              data-testid={`nav-dot-${n}`}
+            />
+          ))}
+        </nav>
+      </main>
+    );
+  }
 
   return (
     <main className="portfolio-root" data-testid="portfolio-page">
@@ -301,6 +420,54 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
   padding-bottom: 80px;
   overflow-x: clip;
 }
+
+/* DESKTOP — original PNG-based slides (matches deployed version) */
+.portfolio-desktop {
+  padding: 24px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.slide-frame {
+  position: relative;
+  width: 100%;
+  max-width: ${SLIDE_W}px;
+  aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
+  background: #F4F1EB;
+  box-shadow: 0 30px 60px -20px rgba(20,18,16,0.25),
+              0 18px 36px -18px rgba(20,18,16,0.18);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+.video-overlay {
+  position: absolute;
+  object-fit: cover;
+  background: #000;
+  z-index: 2;
+  display: block;
+}
+.link-overlay {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  background: transparent;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
+}
+.link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
+.link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
 
 .slide {
   max-width: 1200px;
