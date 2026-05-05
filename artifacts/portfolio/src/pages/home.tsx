@@ -9,11 +9,27 @@ const pct = (n: number, total: number) => `${(n / total) * 100}%`;
 type Overlay = { x: number; y: number; w: number; h: number };
 type VideoOverlay = Overlay & { src: string; poster: string };
 type LinkOverlay = Overlay & { href: string; label: string };
+type PhotoOverlay = Overlay & { cardId: string };
 
 const SLIDE_2_VIDEOS: VideoOverlay[] = [
   { src: "media1.mp4", poster: "image6.png", x: 269, y: 187, w: 123, h: 219 },
   { src: "media2.mp4", poster: "image7.png", x: 516, y: 231, w: 221, h: 393 },
   { src: "media3.mp4", poster: "image8.png", x: 333, y: 810, w: 140, h: 229 },
+];
+
+const SLIDE_2_PHOTOS: PhotoOverlay[] = [
+  { cardId: "w1", x: 54, y: 92, w: 215, h: 338 },
+  { cardId: "w4", x: 294, y: 455, w: 183, h: 304 },
+  { cardId: "w5", x: 141, y: 761, w: 160, h: 243 },
+  { cardId: "w7", x: 505, y: 807, w: 158, h: 235 },
+];
+
+const SLIDE_3_PHOTOS: PhotoOverlay[] = [
+  { cardId: "l1", x: 54, y: 92, w: 215, h: 363 },
+  { cardId: "l2", x: 280, y: 92, w: 215, h: 363 },
+  { cardId: "l3", x: 439, y: 180, w: 261, h: 180 },
+  { cardId: "l4", x: 86, y: 511, w: 381, h: 290 },
+  { cardId: "l5", x: 331, y: 620, w: 215, h: 160 },
 ];
 
 const SLIDE_1_LINKS: LinkOverlay[] = [
@@ -37,9 +53,9 @@ function styleFor(o: Overlay): React.CSSProperties {
 }
 
 const PNG_SLIDES = [
-  { num: 1, src: "slide-1.png", videos: [] as VideoOverlay[], links: SLIDE_1_LINKS },
-  { num: 2, src: "slide-2.png", videos: SLIDE_2_VIDEOS, links: [] as LinkOverlay[] },
-  { num: 3, src: "slide-3.png", videos: [] as VideoOverlay[], links: SLIDE_3_LINKS },
+  { num: 1, src: "slide-1.png", videos: [] as VideoOverlay[], links: SLIDE_1_LINKS, photos: [] as PhotoOverlay[] },
+  { num: 2, src: "slide-2.png", videos: SLIDE_2_VIDEOS, links: [] as LinkOverlay[], photos: SLIDE_2_PHOTOS },
+  { num: 3, src: "slide-3.png", videos: [] as VideoOverlay[], links: SLIDE_3_LINKS, photos: SLIDE_3_PHOTOS },
 ];
 
 function useIsDesktop(query = "(min-width: 768px)") {
@@ -307,6 +323,23 @@ export default function Home() {
                 data-testid={`link-s${slide.num}-${i}`}
               />
             ))}
+            {slide.photos.map((p) => {
+              const card = ALL_CARDS.find((c) => c.id === p.cardId);
+              return (
+                <button
+                  key={`s${slide.num}-p-${p.cardId}`}
+                  type="button"
+                  className="photo-overlay"
+                  onClick={() => card && openLightbox(card)}
+                  aria-label={card ? `Открыть ${card.title} на весь экран` : "Открыть фото"}
+                  title={card?.title}
+                  style={styleFor(p)}
+                  data-testid={`photo-${p.cardId}`}
+                >
+                  <span className="photo-overlay-hint" aria-hidden="true">⤢</span>
+                </button>
+              );
+            })}
           </section>
         ))}
 
@@ -354,6 +387,69 @@ export default function Home() {
                 data-testid={`slide-lightbox-img-${zoomedSlideIndex! + 1}`}
               />
             </div>
+          </div>
+        )}
+
+        {lightboxCard && (
+          <div
+            className="lightbox"
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightboxCard.title}
+            onClick={(e) => { if (e.target === e.currentTarget) setLightboxIndex(null); }}
+            data-testid="lightbox"
+          >
+            <button
+              ref={lightboxCloseRef}
+              type="button"
+              className="lightbox-close"
+              onClick={() => setLightboxIndex(null)}
+              aria-label="Закрыть"
+              data-testid="lightbox-close"
+            >×</button>
+            <button
+              type="button"
+              className="lightbox-nav lightbox-prev"
+              onClick={(e) => { e.stopPropagation(); lightboxPrev(); }}
+              aria-label="Предыдущая работа"
+              data-testid="lightbox-prev"
+            >‹</button>
+            <button
+              type="button"
+              className="lightbox-nav lightbox-next"
+              onClick={(e) => { e.stopPropagation(); lightboxNext(); }}
+              aria-label="Следующая работа"
+              data-testid="lightbox-next"
+            >›</button>
+            <span className="lightbox-counter" data-testid="lightbox-counter">
+              {String(lightboxIndex! + 1).padStart(2, "0")} / {String(ALL_CARDS.length).padStart(2, "0")}
+            </span>
+            <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
+              {lightboxCard.video ? (
+                <video
+                  key={lightboxCard.id}
+                  className="lightbox-video"
+                  src={`${BASE}${lightboxCard.video}`}
+                  poster={`${BASE}${lightboxCard.image}`}
+                  controls
+                  autoPlay
+                  playsInline
+                  data-testid="lightbox-video"
+                />
+              ) : (
+                <img
+                  className="lightbox-img"
+                  src={`${BASE}${lightboxCard.image}`}
+                  alt={lightboxCard.title}
+                  data-testid="lightbox-img"
+                />
+              )}
+              <figcaption className="lightbox-caption">
+                <span className="lightbox-tag">{lightboxCard.tag}</span>
+                <span className="lightbox-title">{lightboxCard.title}</span>
+                <span className="lightbox-sub">{lightboxCard.subtitle}</span>
+              </figcaption>
+            </figure>
           </div>
         )}
 
@@ -594,6 +690,51 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 }
 .link-overlay:hover { background: rgba(224, 48, 24, 0.10); }
 .link-overlay:focus-visible { outline: 2px solid #E03018; outline-offset: 2px; }
+
+.photo-overlay {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.photo-overlay:hover {
+  background: rgba(20, 18, 16, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(244, 241, 235, 0.6);
+}
+.photo-overlay:focus-visible {
+  background: rgba(20, 18, 16, 0.22);
+  box-shadow: inset 0 0 0 2px #E03018;
+}
+.photo-overlay-hint {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(20, 18, 16, 0.78);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+.photo-overlay:hover .photo-overlay-hint,
+.photo-overlay:focus-visible .photo-overlay-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 .slide-lightbox-inner {
   position: relative;
