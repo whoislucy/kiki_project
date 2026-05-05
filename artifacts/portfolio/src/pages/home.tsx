@@ -788,7 +788,9 @@ html, body { margin: 0; padding: 0; background: #F4F1EB; }
 .photo-overlay:focus-visible .photo-overlay-hint {
   opacity: 1;
   transform: translateY(0);
+  pointer-events: auto;
 }
+.photo-overlay-hint:hover { background: #E03018; }
 
 .slide-lightbox-inner {
   position: relative;
