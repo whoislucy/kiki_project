@@ -24,13 +24,13 @@ type WorkCard = {
 };
 
 const SLIDE_2_CARDS: WorkCard[] = [
-  { id: "d1", image: "dimg-2-7.png",  video: "inspiro-ref.mp4", ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Reference · sound design" },
-  { id: "d2", image: "dimg-2-8.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка" },
-  { id: "d3", image: "dimg-2-5.png",  video: "media1.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Идея · Кампейн" },
+  { id: "d1", image: "dimg-2-5.png",  video: "media1.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Кампейн · витрина-холодильник · sound design" },
+  { id: "d2", image: "dimg-2-8.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "PEACH SPRITZ", subtitle: "Продуктовая съёмка · б/а напиток" },
+  { id: "d3", image: "dimg-2-7.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка · plastic bag · ботаника" },
   { id: "d4", image: "dimg-2-1.jpeg", ratio: "338 / 451", tag: "BRAND CAMPAIGN · OPU", title: "BODY RITUAL", subtitle: "Кампейн · AI-персонаж · ритуал" },
-  { id: "d5", image: "dimg-2-4.jpeg", video: "media3.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · OPU", title: "OPU — NEW PRODUCTS", subtitle: "Кампейн · sound design" },
-  { id: "d6", image: "image5.jpeg", ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "ATMOSPHERE", subtitle: "Атмосфера · продукт" },
-  { id: "d7", image: "dimg-2-2.png",  ratio: "338 / 451", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Идея · Кампейн · AI-персонажи" },
+  { id: "d5", image: "dimg-2-4.jpeg", video: "media3.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · OPU", title: "OPU — NEW PRODUCTS", subtitle: "Кампейн · зеркало · sound design" },
+  { id: "d6", image: "image5.jpeg",   ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "ATMOSPHERE", subtitle: "Атмосфера · свечи · продукт" },
+  { id: "d7", image: "dimg-2-2.png",  ratio: "338 / 451", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Кампейн · AI-персонаж · студийная съёмка" },
   { id: "d8", image: "dimg-2-3.png",  video: "media2.mp4", ratio: "164 / 218", tag: "BRAND CAMPAIGN · STAYA", title: "STAYA — CONNECTION YOU CAN TRUST", subtitle: "Продуктовая съёмка · аксессуары · sound design" },
 ];
 
