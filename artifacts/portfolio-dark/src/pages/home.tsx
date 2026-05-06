@@ -24,21 +24,22 @@ type WorkCard = {
 };
 
 const SLIDE_2_CARDS: WorkCard[] = [
-  { id: "d1", image: "dimg-2-5.png",  video: "media1.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Кампейн · витрина-холодильник · sound design" },
-  { id: "d2", image: "dimg-2-8.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "PEACH SPRITZ", subtitle: "Продуктовая съёмка · б/а напиток" },
-  { id: "d3", image: "dimg-2-7.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка · plastic bag · ботаника" },
-  { id: "d4", image: "dimg-2-1.jpeg", ratio: "338 / 451", tag: "BRAND CAMPAIGN · OPU", title: "BODY RITUAL", subtitle: "Кампейн · AI-персонаж · ритуал" },
-  { id: "d5", image: "dimg-2-4.jpeg", video: "media3.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · OPU", title: "OPU — NEW PRODUCTS", subtitle: "Кампейн · зеркало · sound design" },
-  { id: "d6", image: "image5.jpeg",   ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "ATMOSPHERE", subtitle: "Атмосфера · свечи · продукт" },
-  { id: "d7", image: "dimg-2-2.png",  ratio: "338 / 451", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Кампейн · AI-персонаж · студийная съёмка" },
-  { id: "d8", image: "dimg-2-3.png",  video: "media2.mp4", ratio: "164 / 218", tag: "BRAND CAMPAIGN · STAYA", title: "STAYA — CONNECTION YOU CAN TRUST", subtitle: "Продуктовая съёмка · аксессуары · sound design" },
+  { id: "w1", image: "image2.jpeg", ratio: "244 / 378", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Продуктовый лайфстайл · sound design" },
+  { id: "w2", image: "image6.png",  video: "media1.mp4", ratio: "123 / 219", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Идея · Кампейн" },
+  { id: "wNEW", image: "dimg-2-7.png", ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка · ботаника" },
+  { id: "w3", image: "image7.png",  video: "media2.mp4", ratio: "221 / 393", tag: "BRAND CAMPAIGN · STAYA", title: "STAYA — CONNECTION YOU CAN TRUST", subtitle: "Продуктовая съёмка · аксессуары · sound design" },
+  { id: "w4", image: "image3.jpeg", ratio: "167 / 277", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Идея · Кампейн · AI-персонажи" },
+  { id: "w5", image: "image4.jpeg", ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "NATURAL TEXTURES", subtitle: "Идея · AI-модель · продукт" },
+  { id: "w6", image: "image8.png",  video: "media3.mp4", ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "NEW PRODUCTS", subtitle: "Кампейн · sound design" },
+  { id: "w7", image: "image5.jpeg", ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "ATMOSPHERE", subtitle: "Атмосфера · продукт" },
 ];
 
 const SLIDE_3_CARDS: WorkCard[] = [
-  { id: "e1", image: "dimg-3-1.png", ratio: "338 / 451", tag: "LOOKBOOK · CAPSULE", title: "THE ASYMMETRIC ENSEMBLE", subtitle: "AI-лукбук · капсула" },
-  { id: "e2", image: "dimg-3-3.png", ratio: "338 / 451", tag: "LOOKBOOK · EDITORIAL", title: "FLAT LAY STUDY", subtitle: "AI-лукбук · AI-модели" },
-  { id: "e3", image: "dimg-3-4.png", ratio: "338 / 451", tag: "LOOKBOOK · EDITORIAL", title: "OLIVE DUO", subtitle: "AI-лукбук · стиль" },
-  { id: "e4", image: "dimg-3-2.png", ratio: "338 / 451", tag: "LOOKBOOK · JEWELLERY", title: "GOLD & PERIDOT SET", subtitle: "Ювелирный лукбук · AI-модель · 1:1 точность" },
+  { id: "l1", image: "image9.jpeg",  ratio: "184 / 327", tag: "LOOKBOOK · EDITORIAL", title: "FLAT LAY STUDY", subtitle: "AI-лукбук · AI-модели" },
+  { id: "l2", image: "image12.jpeg", ratio: "184 / 327", tag: "LOOKBOOK · EDITORIAL", title: "OLIVE DUO", subtitle: "AI-лукбук · стиль" },
+  { id: "l3", image: "image10.png",  ratio: "286 / 200", tag: "LOOKBOOK · CAPSULE", title: "THE ASYMMETRIC ENSEMBLE", subtitle: "AI-лукбук · капсула" },
+  { id: "l4", image: "image11.png",  ratio: "388 / 295", tag: "LOOKBOOK · JEWELLERY", title: "GOLD & PERIDOT SET", subtitle: "Ювелирный лукбук · AI-модель · 1:1 точность" },
+  { id: "l5", image: "image13.png",  ratio: "192 / 144", tag: "LOOKBOOK · JEWELLERY", title: "GECKO DETAIL", subtitle: "Предметная съёмка · детальный план" },
 ];
 
 type ContactLink = { label: string; value: string; href: string; accent?: boolean };
@@ -55,12 +56,15 @@ function useSwipe(onPrev: () => void, onNext: () => void, enabled: boolean) {
     let startX = 0, startY = 0, tracking = false;
     const onStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) { tracking = false; return; }
-      startX = e.touches[0].clientX; startY = e.touches[0].clientY; tracking = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
     };
     const onEnd = (e: TouchEvent) => {
       if (!tracking) return;
       const t = e.changedTouches[0];
-      const dx = t.clientX - startX, dy = t.clientY - startY;
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
       tracking = false;
       if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
         if (dx < 0) onNext(); else onPrev();
@@ -197,6 +201,20 @@ export default function Home() {
             </li>
           ))}
         </ul>
+
+        <div className="hero-video-wrap" data-testid="hero-video-wrap">
+          <video
+            className="hero-video"
+            src={`${BASE}fridge.mp4`}
+            poster={`${BASE}image6.png`}
+            controls
+            muted
+            playsInline
+            preload="metadata"
+            data-testid="hero-video"
+          />
+          <span className="hero-video-badge">▶ INSPIRO · витрина-холодильник</span>
+        </div>
 
         <div className="big-tagline">
           <h2 className="big-tagline-1">ВИЗУАЛЬНЫЙ</h2>
@@ -347,8 +365,8 @@ export default function Home() {
 const BG = "#0E0D0C";
 const FG = "#F0EDE8";
 const MUTED = "#6A6460";
-const ACCENT = "#E03018";
 const BORDER = "rgba(240,237,232,0.10)";
+const ACCENT = "#E03018";
 
 const styles = `
 :root { color-scheme: dark; }
@@ -378,26 +396,20 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   align-items: center;
   gap: 16px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #2E2B27;
+  border-bottom: 1px solid ${BORDER};
   margin-bottom: clamp(28px, 5vw, 56px);
 }
-.header-tag {
+.header-tag, .header-num {
   font-family: 'JetBrains Mono', monospace;
   font-size: clamp(9px, 2.4vw, 11px);
   letter-spacing: 0.12em;
   color: ${MUTED};
   text-transform: uppercase;
 }
-.header-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(9px, 2.4vw, 11px);
-  letter-spacing: 0.12em;
-  color: ${MUTED};
-  text-align: right;
-}
+.header-num { text-align: right; }
 .header-asterisk { color: ${ACCENT}; font-size: 14px; }
 
-/* HERO (slide 1) */
+/* HERO */
 .hero { margin-bottom: clamp(28px, 5vw, 56px); }
 .hero-title, .hero-subtitle {
   margin: 0;
@@ -411,10 +423,10 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .hero-title { color: ${FG}; }
 .hero-subtitle { color: ${ACCENT}; }
 
-/* SERVICES list */
+/* SERVICES */
 .services {
   list-style: none;
-  margin: 0 0 clamp(48px, 8vw, 96px);
+  margin: 0 0 clamp(40px, 6vw, 72px);
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -426,7 +438,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   align-items: center;
   gap: 12px;
   padding: 14px 0;
-  border-bottom: 1px solid #2E2B27;
+  border-bottom: 1px solid ${BORDER};
 }
 .service-name {
   font-family: 'Unbounded', sans-serif;
@@ -443,8 +455,43 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   letter-spacing: 0.1em;
 }
 
+/* HERO VIDEO (slide 1, middle) */
+.hero-video-wrap {
+  position: relative;
+  margin: clamp(32px, 6vw, 72px) auto;
+  max-width: 760px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6);
+  aspect-ratio: 16 / 9;
+}
+.hero-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: #000;
+}
+.hero-video-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: ${ACCENT};
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  padding: 6px 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 2;
+  text-transform: uppercase;
+}
+
 /* BIG tagline */
-.big-tagline { margin: clamp(48px, 10vw, 120px) 0 clamp(28px, 5vw, 48px); }
+.big-tagline { margin: clamp(40px, 8vw, 96px) 0 clamp(28px, 5vw, 48px); }
 .big-tagline-1, .big-tagline-2 {
   margin: 0;
   font-family: 'Unbounded', sans-serif;
@@ -464,7 +511,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   align-items: center;
   gap: 16px;
   padding-top: 16px;
-  border-top: 1px solid #2E2B27;
+  border-top: 1px solid ${BORDER};
 }
 .mono-link {
   font-family: 'JetBrains Mono', monospace;
@@ -495,16 +542,11 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
 
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-width: 0;
-}
+.card { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .card-media {
   position: relative;
   width: 100%;
-  background: #1A1816;
+  background: #1A1817;
   overflow: hidden;
   border-radius: 2px;
   aspect-ratio: 3 / 4 !important;
@@ -543,7 +585,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.16);
+  background: rgba(14,13,12,0.86);
   color: #fff;
   font-size: 14px;
   display: flex;
@@ -569,7 +611,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .video-badge {
   position: absolute;
   top: 8px;
-  left: 8px;
+  right: 8px;
   background: ${ACCENT};
   color: #fff;
   font-family: 'JetBrains Mono', monospace;
@@ -607,55 +649,12 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   line-height: 1.4;
 }
 
-/* CONTACTS footer */
-.contacts-footer {
-  margin-top: clamp(40px, 6vw, 64px);
-  padding-top: 24px;
-  border-top: 1px solid #2E2B27;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px 32px;
-}
-.contact-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 8px 0;
-  text-decoration: none;
-  color: inherit;
-  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
-  min-height: 44px;
-}
-.contact-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  color: ${MUTED};
-  text-transform: uppercase;
-}
-.contact-value {
-  font-family: 'Unbounded', sans-serif;
-  font-weight: 600;
-  font-size: clamp(15px, 3.4vw, 18px);
-  color: ${FG};
-  word-break: break-word;
-}
-.contact-email .contact-value {
-  white-space: nowrap;
-  font-size: clamp(12px, 2.4vw, 15px);
-  letter-spacing: -0.01em;
-  word-break: keep-all;
-}
-.contact-accent .contact-value { color: ${ACCENT}; }
-.contact-link { transition: opacity 0.15s ease; }
-.contact-link:hover, .contact-link:focus-visible { opacity: 0.7; outline: none; }
-
 /* LIGHTBOX */
 .lightbox {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(0,0,0,0.96);
+  background: rgba(8,7,6,0.96);
   display: flex;
   align-items: flex-start;
   justify-content: center;
@@ -684,7 +683,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-  -webkit-tap-highlight-color: transparent;
 }
 .lightbox-close:active { transform: scale(0.94); }
 .lightbox-figure {
@@ -695,8 +693,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   max-width: min(1200px, 100%);
   max-height: 100%;
 }
-.lightbox-img,
-.lightbox-video {
+.lightbox-img, .lightbox-video {
   display: block;
   max-width: 100%;
   max-height: calc(100vh - 160px);
@@ -705,9 +702,8 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   object-fit: contain;
   border-radius: 2px;
   user-select: none;
-  background: #000;
 }
-.lightbox-video { width: min(960px, 100%); }
+.lightbox-video { background: #000; }
 .lightbox-caption {
   display: flex;
   flex-direction: column;
@@ -731,7 +727,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .lightbox-sub {
   font-family: 'Onest', sans-serif;
   font-size: 12px;
-  color: rgba(240,237,232,0.55);
+  color: rgba(240,237,232,0.6);
 }
 .lightbox-nav {
   position: fixed;
@@ -751,7 +747,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-  -webkit-tap-highlight-color: transparent;
   padding: 0 0 4px 0;
   font-weight: 300;
   transition: background 0.15s ease, transform 0.15s ease;
@@ -775,11 +770,49 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.12em;
-  background: rgba(20,18,16,0.6);
+  background: rgba(0,0,0,0.6);
   padding: 6px 12px;
   border-radius: 999px;
   backdrop-filter: blur(8px);
 }
+
+/* CONTACTS footer */
+.contacts-footer {
+  margin-top: clamp(40px, 6vw, 64px);
+  padding-top: 24px;
+  border-top: 1px solid ${BORDER};
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px 32px;
+}
+.contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+  text-decoration: none;
+  color: inherit;
+  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
+  min-height: 44px;
+}
+.contact-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: ${MUTED};
+  text-transform: uppercase;
+}
+.contact-value {
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 600;
+  font-size: clamp(15px, 3.4vw, 18px);
+  color: ${FG};
+  word-break: break-word;
+}
+.contact-accent .contact-value { color: ${ACCENT}; }
+.contact-email .contact-value { white-space: nowrap; font-size: clamp(12px, 2.4vw, 15px); }
+.contact-link { transition: opacity 0.15s ease; }
+.contact-link:hover, .contact-link:focus-visible { opacity: 0.7; outline: none; }
 
 /* NAV PILL */
 .nav-dots {
@@ -796,7 +829,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   gap: 2px;
   align-items: center;
   box-shadow: 0 8px 24px -8px rgba(0,0,0,0.6);
-  border: 1px solid rgba(240,237,232,0.06);
+  border: 1px solid ${BORDER};
 }
 .nav-dot {
   width: 40px;
@@ -805,7 +838,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   border: none;
   padding: 0;
   cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
   position: relative;
   display: flex;
   align-items: center;
@@ -817,7 +849,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(240,237,232,0.40);
+  background: rgba(240,237,232,0.4);
   transition: all 0.2s ease;
 }
 .nav-dot[data-active="true"]::before {
@@ -849,9 +881,8 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   .contact-block:first-child { grid-column: 1 / -1; }
   .contact-label { font-size: 8.5px; letter-spacing: 0.1em; }
   .contact-value { font-size: 13px; }
-  .contact-email .contact-value { font-size: 11px; word-break: keep-all; white-space: nowrap; }
   .contact-author { font-size: 15px; }
-  .contact-block:nth-child(4) .contact-value { font-size: 11px; word-break: break-all; }
+  .contact-email .contact-value { font-size: 11px; }
 }
 
 @media (max-width: 340px) {
