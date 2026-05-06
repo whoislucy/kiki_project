@@ -2,6 +2,81 @@ import { useEffect, useRef, useState } from "react";
 
 const BASE = import.meta.env.BASE_URL;
 
+const SLIDE_W = 794;
+const SLIDE_H = 1123;
+const pct = (n: number, total: number) => `${(n / total) * 100}%`;
+
+type Overlay = { x: number; y: number; w: number; h: number };
+type VideoOverlay = Overlay & { src: string; poster: string };
+type LinkOverlay = Overlay & { href: string; label: string };
+type PhotoOverlay = Overlay & { cardId: string };
+
+/* SLIDE 1 (dark): big empty area in the middle — overlay fridge video there */
+const SLIDE_1_VIDEOS: VideoOverlay[] = [
+  { src: "fridge.mp4", poster: "image6.png", x: 174, y: 415, w: 446, h: 290 },
+];
+
+const SLIDE_1_LINKS: LinkOverlay[] = [
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram @atelier.de.kiki", x: 38, y: 1058, w: 150, h: 26 },
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 624, y: 1058, w: 132, h: 26 },
+];
+
+/* SLIDE 2 (dark): real INSPIRO fridge bottle video in middle-center */
+const SLIDE_2_VIDEOS: VideoOverlay[] = [
+  { src: "media1.mp4", poster: "image6.png", x: 271, y: 651, w: 232, h: 168 },
+];
+
+/* SLIDE 2 (dark): clickable hotspots over each visible card on the PNG */
+const SLIDE_2_PHOTOS: PhotoOverlay[] = [
+  { cardId: "w1", x: 30,  y: 220, w: 245, h: 405 }, // BODY RITUAL (left)
+  { cardId: "w3", x: 248, y: 257, w: 175, h: 215 }, // STAYA video card
+  { cardId: "w4", x: 398, y: 220, w: 360, h: 405 }, // MADE FOR DOGS (right)
+  { cardId: "w6", x: 30,  y: 651, w: 230, h: 168 }, // OPU candles video
+  { cardId: "w5", x: 525, y: 651, w: 232, h: 405 }, // STAYA dog back (right)
+];
+
+const SLIDE_3_PHOTOS: PhotoOverlay[] = [
+  { cardId: "l3", x: 36,  y: 100, w: 357, h: 460 }, // ASYMMETRIC (4 figures top-left)
+  { cardId: "l4", x: 405, y: 100, w: 353, h: 460 }, // GOLD & PERIDOT (right)
+  { cardId: "l1", x: 36,  y: 580, w: 357, h: 470 }, // FLAT LAY STUDY
+  { cardId: "l2", x: 405, y: 580, w: 353, h: 470 }, // OLIVE DUO
+];
+
+const SLIDE_3_LINKS: LinkOverlay[] = [
+  { href: "https://t.me/Kikiki_me", label: "Telegram @Kikiki_me", x: 280, y: 1066, w: 145, h: 24 },
+  { href: "https://instagram.com/atelier.de.kiki", label: "Instagram", x: 430, y: 1066, w: 145, h: 24 },
+  { href: "mailto:palokris@gmail.com", label: "Email", x: 580, y: 1066, w: 175, h: 24 },
+];
+
+function styleFor(o: Overlay): React.CSSProperties {
+  return {
+    left: pct(o.x, SLIDE_W),
+    top: pct(o.y, SLIDE_H),
+    width: pct(o.w, SLIDE_W),
+    height: pct(o.h, SLIDE_H),
+  };
+}
+
+const PNG_SLIDES = [
+  { num: 1, src: "slide-1.png", videos: SLIDE_1_VIDEOS, links: SLIDE_1_LINKS, photos: [] as PhotoOverlay[] },
+  { num: 2, src: "slide-2.png", videos: SLIDE_2_VIDEOS, links: [] as LinkOverlay[], photos: SLIDE_2_PHOTOS },
+  { num: 3, src: "slide-3.png", videos: [] as VideoOverlay[], links: SLIDE_3_LINKS, photos: SLIDE_3_PHOTOS },
+];
+
+function useIsDesktop(query = "(min-width: 768px)") {
+  const [match, setMatch] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return window.matchMedia(query).matches;
+  });
+  useEffect(() => {
+    const mql = window.matchMedia(query);
+    const onChange = (e: MediaQueryListEvent) => setMatch(e.matches);
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, [query]);
+  return match;
+}
+
 const SERVICES = [
   "Коммерческие кампании",
   "Лукбуки и Editorial",
@@ -105,6 +180,7 @@ function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void 
 const ALL_CARDS: WorkCard[] = [...SLIDE_2_CARDS, ...SLIDE_3_CARDS];
 
 export default function Home() {
+  const isDesktop = useIsDesktop();
   const [activeSlide, setActiveSlide] = useState(1);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
@@ -166,13 +242,177 @@ export default function Home() {
       observers.push(obs);
     });
     return () => observers.forEach((o) => o.disconnect());
-  }, []);
+  }, [isDesktop]);
 
   const scrollToSlide = (idx: number) => {
     const el = slideRefs.current[idx];
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const lightbox = lightboxCard && (
+    <div
+      className="lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label={lightboxCard.title}
+      onClick={(e) => { if (e.target === e.currentTarget) setLightboxIndex(null); }}
+      data-testid="lightbox"
+    >
+      <button
+        ref={lightboxCloseRef}
+        type="button"
+        className="lightbox-close"
+        onClick={() => setLightboxIndex(null)}
+        aria-label="Закрыть"
+        data-testid="lightbox-close"
+      >×</button>
+      <button
+        type="button"
+        className="lightbox-nav lightbox-prev"
+        onClick={(e) => { e.stopPropagation(); lightboxPrev(); }}
+        aria-label="Предыдущая работа"
+        data-testid="lightbox-prev"
+      >‹</button>
+      <button
+        type="button"
+        className="lightbox-nav lightbox-next"
+        onClick={(e) => { e.stopPropagation(); lightboxNext(); }}
+        aria-label="Следующая работа"
+        data-testid="lightbox-next"
+      >›</button>
+      <span className="lightbox-counter" data-testid="lightbox-counter">
+        {String(lightboxIndex! + 1).padStart(2, "0")} / {String(ALL_CARDS.length).padStart(2, "0")}
+      </span>
+      <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
+        {lightboxCard.video ? (
+          <video
+            key={lightboxCard.id}
+            className="lightbox-video"
+            src={`${BASE}${lightboxCard.video}`}
+            poster={`${BASE}${lightboxCard.image}`}
+            controls
+            muted
+            autoPlay
+            playsInline
+            data-testid="lightbox-video"
+          />
+        ) : (
+          <img
+            className="lightbox-img"
+            src={`${BASE}${lightboxCard.image}`}
+            alt={lightboxCard.title}
+            data-testid="lightbox-img"
+          />
+        )}
+        <figcaption className="lightbox-caption">
+          <span className="lightbox-tag">{lightboxCard.tag}</span>
+          <span className="lightbox-title">{lightboxCard.title}</span>
+          <span className="lightbox-sub">{lightboxCard.subtitle}</span>
+        </figcaption>
+      </figure>
+    </div>
+  );
+
+  /* DESKTOP: PNG-overlay layout matching the dark PPTX */
+  if (isDesktop) {
+    return (
+      <main className="portfolio-root portfolio-desktop" data-testid="portfolio-page">
+        <style>{styles}</style>
+        {PNG_SLIDES.map((slide, idx) => (
+          <section
+            key={`png-slide-${slide.num}`}
+            ref={(el) => { slideRefs.current[idx] = el; }}
+            className="slide-frame"
+            data-testid={`slide-${slide.num}`}
+          >
+            <img
+              className="slide-bg"
+              src={`${BASE}${slide.src}`}
+              alt={`Slide ${slide.num}`}
+              draggable={false}
+            />
+            {slide.videos.map((v, i) => {
+              const card = ALL_CARDS.find((c) => c.video === v.src);
+              return (
+                <div
+                  key={`s${slide.num}-v-${i}`}
+                  className="video-overlay-wrap"
+                  style={styleFor(v)}
+                >
+                  <video
+                    className="video-overlay"
+                    src={`${BASE}${v.src}`}
+                    poster={`${BASE}${v.poster}`}
+                    controls
+                    muted
+                    playsInline
+                    preload="metadata"
+                    data-testid={`video-${v.src.replace(/\./g, "-")}`}
+                  />
+                  {card && (
+                    <button
+                      type="button"
+                      className="video-zoom-btn"
+                      onClick={() => openLightbox(card)}
+                      aria-label={`Открыть ${card.title} на весь экран`}
+                      data-testid={`video-zoom-${card.id}`}
+                    >⤢</button>
+                  )}
+                </div>
+              );
+            })}
+            {slide.links.map((l, i) => (
+              <a
+                key={`s${slide.num}-l-${i}`}
+                className="link-overlay"
+                href={l.href}
+                target={l.href.startsWith("mailto:") ? undefined : "_blank"}
+                rel={l.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
+                aria-label={l.label}
+                style={styleFor(l)}
+                data-testid={`link-s${slide.num}-${i}`}
+              />
+            ))}
+            {slide.photos.map((p) => {
+              const card = ALL_CARDS.find((c) => c.id === p.cardId);
+              return (
+                <button
+                  key={`s${slide.num}-p-${p.cardId}`}
+                  type="button"
+                  className="photo-overlay"
+                  onClick={() => card && openLightbox(card)}
+                  aria-label={card ? `Открыть ${card.title} на весь экран` : "Открыть фото"}
+                  style={styleFor(p)}
+                  data-testid={`photo-${p.cardId}`}
+                >
+                  <span className="photo-overlay-hint" aria-hidden="true">⤢</span>
+                </button>
+              );
+            })}
+          </section>
+        ))}
+
+        {lightbox}
+
+        <nav className="nav-dots" aria-label="Навигация по слайдам">
+          <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
+          {[1, 2, 3].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className="nav-dot"
+              data-active={activeSlide === n}
+              onClick={() => scrollToSlide(n - 1)}
+              aria-label={`Перейти к слайду ${n}`}
+              data-testid={`nav-dot-${n}`}
+            />
+          ))}
+        </nav>
+      </main>
+    );
+  }
+
+  /* MOBILE: native grid layout (mirrors light content) */
   return (
     <main className="portfolio-root" data-testid="portfolio-page">
       <style>{styles}</style>
@@ -280,69 +520,7 @@ export default function Home() {
         </footer>
       </section>
 
-      {lightboxCard && (
-        <div
-          className="lightbox"
-          role="dialog"
-          aria-modal="true"
-          aria-label={lightboxCard.title}
-          onClick={(e) => { if (e.target === e.currentTarget) setLightboxIndex(null); }}
-          data-testid="lightbox"
-        >
-          <button
-            ref={lightboxCloseRef}
-            type="button"
-            className="lightbox-close"
-            onClick={() => setLightboxIndex(null)}
-            aria-label="Закрыть"
-            data-testid="lightbox-close"
-          >×</button>
-          <button
-            type="button"
-            className="lightbox-nav lightbox-prev"
-            onClick={(e) => { e.stopPropagation(); lightboxPrev(); }}
-            aria-label="Предыдущая работа"
-            data-testid="lightbox-prev"
-          >‹</button>
-          <button
-            type="button"
-            className="lightbox-nav lightbox-next"
-            onClick={(e) => { e.stopPropagation(); lightboxNext(); }}
-            aria-label="Следующая работа"
-            data-testid="lightbox-next"
-          >›</button>
-          <span className="lightbox-counter" data-testid="lightbox-counter">
-            {String(lightboxIndex! + 1).padStart(2, "0")} / {String(ALL_CARDS.length).padStart(2, "0")}
-          </span>
-          <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
-            {lightboxCard.video ? (
-              <video
-                key={lightboxCard.id}
-                className="lightbox-video"
-                src={`${BASE}${lightboxCard.video}`}
-                poster={`${BASE}${lightboxCard.image}`}
-                controls
-                muted
-                autoPlay
-                playsInline
-                data-testid="lightbox-video"
-              />
-            ) : (
-              <img
-                className="lightbox-img"
-                src={`${BASE}${lightboxCard.image}`}
-                alt={lightboxCard.title}
-                data-testid="lightbox-img"
-              />
-            )}
-            <figcaption className="lightbox-caption">
-              <span className="lightbox-tag">{lightboxCard.tag}</span>
-              <span className="lightbox-title">{lightboxCard.title}</span>
-              <span className="lightbox-sub">{lightboxCard.subtitle}</span>
-            </figcaption>
-          </figure>
-        </div>
-      )}
+      {lightbox}
 
       <nav className="nav-dots" aria-label="Навигация по слайдам">
         <span className="nav-label">{String(activeSlide).padStart(2, "0")} / 03</span>
@@ -381,6 +559,127 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   overflow-x: clip;
 }
 
+/* DESKTOP — PNG slides with overlays */
+.portfolio-desktop {
+  padding: 24px 16px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+.slide-frame {
+  position: relative;
+  width: 100%;
+  max-width: ${SLIDE_W}px;
+  aspect-ratio: ${SLIDE_W} / ${SLIDE_H};
+  background: ${BG};
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8),
+              0 18px 36px -18px rgba(0,0,0,0.5);
+  overflow: hidden;
+  border-radius: 2px;
+}
+.slide-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  display: block;
+}
+.video-overlay-wrap {
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+}
+.video-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+  display: block;
+}
+.video-zoom-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #151210;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  z-index: 4;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease, color 0.15s ease;
+  padding: 0;
+}
+.video-overlay-wrap:hover .video-zoom-btn,
+.video-zoom-btn:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.video-zoom-btn:hover { background: ${ACCENT}; color: #fff; }
+.link-overlay {
+  position: absolute;
+  z-index: 3;
+  display: block;
+  background: transparent;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+.link-overlay:hover { background: rgba(224, 48, 24, 0.18); }
+.link-overlay:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: 2px; }
+
+.photo-overlay {
+  position: absolute;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.18s ease, box-shadow 0.18s ease;
+}
+.photo-overlay-hint {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #151210;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 0.18s ease, transform 0.18s ease, background 0.15s ease, color 0.15s ease;
+  pointer-events: none;
+}
+.photo-overlay:hover .photo-overlay-hint,
+.photo-overlay:focus-visible .photo-overlay-hint {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.photo-overlay-hint:hover { background: ${ACCENT}; color: #fff; }
+
+/* MOBILE-ONLY layout */
 .slide {
   max-width: 1200px;
   margin: 0 auto;
@@ -389,7 +688,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   border-bottom: 1px solid ${BORDER};
 }
 
-/* HEADER */
 .slide-header {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -409,7 +707,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .header-num { text-align: right; }
 .header-asterisk { color: ${ACCENT}; font-size: 14px; }
 
-/* HERO */
 .hero { margin-bottom: clamp(28px, 5vw, 56px); }
 .hero-title, .hero-subtitle {
   margin: 0;
@@ -423,7 +720,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .hero-title { color: ${FG}; }
 .hero-subtitle { color: ${ACCENT}; }
 
-/* SERVICES */
 .services {
   list-style: none;
   margin: 0 0 clamp(40px, 6vw, 72px);
@@ -455,7 +751,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   letter-spacing: 0.1em;
 }
 
-/* HERO VIDEO (slide 1, middle) */
 .hero-video-wrap {
   position: relative;
   margin: clamp(32px, 6vw, 72px) auto;
@@ -490,7 +785,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   text-transform: uppercase;
 }
 
-/* BIG tagline */
 .big-tagline { margin: clamp(40px, 8vw, 96px) 0 clamp(28px, 5vw, 48px); }
 .big-tagline-1, .big-tagline-2 {
   margin: 0;
@@ -504,7 +798,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .big-tagline-1 { color: ${FG}; }
 .big-tagline-2 { color: ${ACCENT}; }
 
-/* SLIDE 1 footer */
 .slide-1-footer {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -520,7 +813,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   color: ${MUTED};
   text-decoration: none;
   transition: color 0.15s ease;
-  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
   display: inline-block;
   padding: 12px 4px;
   margin: -12px -4px;
@@ -529,7 +821,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .slide-1-footer .mono-link:last-child { text-align: right; }
 .footer-asterisk { color: ${ACCENT}; font-size: 14px; text-align: center; }
 
-/* CARDS GRID */
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -537,9 +828,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 }
 @media (min-width: 640px) {
   .cards-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: clamp(24px, 4vw, 40px) clamp(20px, 3vw, 32px); }
-}
-@media (min-width: 1024px) {
-  .cards-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
 
 .card { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
@@ -551,16 +839,12 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   border-radius: 2px;
   aspect-ratio: 3 / 4 !important;
 }
-@media (min-width: 1024px) {
-  .card-media { aspect-ratio: var(--natural-ratio, 3 / 4) !important; }
-}
 .card-img {
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
 }
-
 .card-img-btn {
   position: absolute;
   inset: 0;
@@ -572,7 +856,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   background: transparent;
   cursor: zoom-in;
   display: block;
-  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
   overflow: hidden;
 }
 .card-img-btn:focus-visible { outline: 2px solid ${ACCENT}; outline-offset: -2px; }
@@ -601,7 +884,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
 .card-img-btn:focus-visible .card-zoom-hint {
   opacity: 1;
   transform: translateY(0);
-  pointer-events: auto;
 }
 .card-zoom-hint:hover { background: ${ACCENT}; }
 @media (hover: none) and (pointer: coarse) {
@@ -660,31 +942,31 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   justify-content: center;
   padding: 56px 16px 24px;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
   animation: fade-in 0.18s ease-out;
 }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-.lightbox-close {
+.lightbox-close, .lightbox-nav {
   position: fixed;
-  top: 12px;
-  right: 12px;
   z-index: 101;
-  width: 44px;
-  height: 44px;
   border: none;
   border-radius: 50%;
   background: rgba(255,255,255,0.96);
   color: #151210;
   cursor: pointer;
-  font-size: 26px;
-  line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.6);
 }
-.lightbox-close:active { transform: scale(0.94); }
+.lightbox-close {
+  top: 12px;
+  right: 12px;
+  width: 44px;
+  height: 44px;
+  font-size: 26px;
+  line-height: 1;
+}
 .lightbox-figure {
   margin: 0;
   display: flex;
@@ -730,29 +1012,17 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   color: rgba(240,237,232,0.6);
 }
 .lightbox-nav {
-  position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 101;
   width: 48px;
   height: 48px;
-  border: none;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.92);
-  color: #151210;
-  cursor: pointer;
   font-size: 32px;
   line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
   padding: 0 0 4px 0;
   font-weight: 300;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 .lightbox-nav:hover { background: #fff; }
-.lightbox-nav:active { transform: translateY(-50%) scale(0.94); }
 .lightbox-prev { left: 12px; }
 .lightbox-next { right: 12px; }
 @media (max-width: 480px) {
@@ -776,7 +1046,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   backdrop-filter: blur(8px);
 }
 
-/* CONTACTS footer */
+/* CONTACTS */
 .contacts-footer {
   margin-top: clamp(40px, 6vw, 64px);
   padding-top: 24px;
@@ -792,7 +1062,6 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   padding: 8px 0;
   text-decoration: none;
   color: inherit;
-  -webkit-tap-highlight-color: rgba(224, 48, 24, 0.20);
   min-height: 44px;
 }
 .contact-label {
@@ -884,14 +1153,9 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   .contact-author { font-size: 15px; }
   .contact-email .contact-value { font-size: 11px; }
 }
-
 @media (max-width: 340px) {
   .cards-grid { grid-template-columns: 1fr; }
   .contacts-footer { grid-template-columns: 1fr; }
   .contact-block:first-child { grid-column: auto; }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  .mono-link:hover, .contact-link:hover { color: inherit; opacity: 1; }
 }
 `;
