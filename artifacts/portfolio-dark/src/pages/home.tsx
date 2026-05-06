@@ -16,29 +16,29 @@ const SERVICES = [
 type WorkCard = {
   id: string;
   image: string;
+  video?: string;
   ratio: string;
   tag: string;
   title: string;
   subtitle: string;
-  videoBadge?: boolean;
 };
 
 const SLIDE_2_CARDS: WorkCard[] = [
-  { id: "d1", image: "dimg-2-1.jpeg", ratio: "338 / 451", tag: "BRAND CAMPAIGN · OPU", title: "BODY RITUAL", subtitle: "Кампейн · AI-персонаж · ритуал" },
-  { id: "d2", image: "dimg-2-2.png",  ratio: "338 / 451", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Кампейн · студийная съёмка" },
-  { id: "d3", image: "dimg-2-3.png",  ratio: "164 / 218", tag: "BRAND CAMPAIGN · STAYA", title: "STAYA — MADE FOR DOGS", subtitle: "Кампейн · AI-персонажи · city", videoBadge: true },
-  { id: "d4", image: "dimg-2-4.jpeg", ratio: "222 / 125", tag: "BRAND CAMPAIGN · OPU", title: "OPU — BODY RITUAL", subtitle: "Кампейн · AI-персонаж · sound design", videoBadge: true },
-  { id: "d5", image: "dimg-2-5.png",  ratio: "222 / 125", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Б/а напитки · ботаническая лаборатория", videoBadge: true },
-  { id: "d6", image: "dimg-2-6.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Продуктовая съёмка" },
-  { id: "d7", image: "dimg-2-7.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка" },
-  { id: "d8", image: "dimg-2-8.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "PEACH SPRITZ", subtitle: "Продуктовая съёмка" },
+  { id: "d1", image: "dimg-2-7.png",  video: "inspiro-ref.mp4", ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Reference · sound design" },
+  { id: "d2", image: "dimg-2-8.png",  ratio: "222 / 296", tag: "BRAND CAMPAIGN · INSPIRO", title: "BOTANICAL INFUSION", subtitle: "Концепт-съёмка" },
+  { id: "d3", image: "dimg-2-5.png",  video: "media1.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · INSPIRO", title: "INSPIRO — BOTANICAL LAB", subtitle: "Идея · Кампейн" },
+  { id: "d4", image: "dimg-2-1.jpeg", ratio: "338 / 451", tag: "BRAND CAMPAIGN · OPU", title: "BODY RITUAL", subtitle: "Кампейн · AI-персонаж · ритуал" },
+  { id: "d5", image: "dimg-2-4.jpeg", video: "media3.mp4", ratio: "222 / 125", tag: "BRAND CAMPAIGN · OPU", title: "OPU — NEW PRODUCTS", subtitle: "Кампейн · sound design" },
+  { id: "d6", image: "image5.jpeg", ratio: "140 / 229", tag: "BRAND CAMPAIGN · OPU", title: "ATMOSPHERE", subtitle: "Атмосфера · продукт" },
+  { id: "d7", image: "dimg-2-2.png",  ratio: "338 / 451", tag: "BRAND CAMPAIGN · STAYA", title: "MADE FOR DOGS", subtitle: "Идея · Кампейн · AI-персонажи" },
+  { id: "d8", image: "dimg-2-3.png",  video: "media2.mp4", ratio: "164 / 218", tag: "BRAND CAMPAIGN · STAYA", title: "STAYA — CONNECTION YOU CAN TRUST", subtitle: "Продуктовая съёмка · аксессуары · sound design" },
 ];
 
 const SLIDE_3_CARDS: WorkCard[] = [
-  { id: "e1", image: "dimg-3-1.png", ratio: "338 / 451", tag: "LOOKBOOK · CAPSULE", title: "THE ASYMMETRIC ENSEMBLE", subtitle: "AI-лукбук · AI-модели · капсула" },
-  { id: "e2", image: "dimg-3-2.png", ratio: "338 / 451", tag: "LOOKBOOK · JEWELLERY", title: "GOLD & PERIDOT SET", subtitle: "Ювелирный лукбук · 1:1 точность" },
-  { id: "e3", image: "dimg-3-3.png", ratio: "338 / 451", tag: "LOOKBOOK · DETAIL", title: "FLAT LAY STUDY", subtitle: "Предметная детализация · фактуры" },
-  { id: "e4", image: "dimg-3-4.png", ratio: "338 / 451", tag: "LOOKBOOK · EDITORIAL", title: "OLIVE DUO", subtitle: "AI-лукбук · стиль" },
+  { id: "e1", image: "dimg-3-1.png", ratio: "338 / 451", tag: "LOOKBOOK · CAPSULE", title: "THE ASYMMETRIC ENSEMBLE", subtitle: "AI-лукбук · капсула" },
+  { id: "e2", image: "dimg-3-3.png", ratio: "338 / 451", tag: "LOOKBOOK · EDITORIAL", title: "FLAT LAY STUDY", subtitle: "AI-лукбук · AI-модели" },
+  { id: "e3", image: "dimg-3-4.png", ratio: "338 / 451", tag: "LOOKBOOK · EDITORIAL", title: "OLIVE DUO", subtitle: "AI-лукбук · стиль" },
+  { id: "e4", image: "dimg-3-2.png", ratio: "338 / 451", tag: "LOOKBOOK · JEWELLERY", title: "GOLD & PERIDOT SET", subtitle: "Ювелирный лукбук · AI-модель · 1:1 точность" },
 ];
 
 type ContactLink = { label: string; value: string; href: string; accent?: boolean };
@@ -87,9 +87,9 @@ function Card({ card, onOpen }: { card: WorkCard; onOpen: (c: WorkCard) => void 
           data-testid={`open-${card.id}`}
         >
           <img className="card-img" src={`${BASE}${card.image}`} alt={card.title} loading="lazy" />
-          <span className="card-zoom-hint" aria-hidden="true">⤢</span>
+          <span className="card-zoom-hint" aria-hidden="true">{card.video ? "▶" : "⤢"}</span>
         </button>
-        {card.videoBadge && <span className="video-badge" aria-hidden="true">▶ VIDEO</span>}
+        {card.video && <span className="video-badge" aria-hidden="true">▶ VIDEO</span>}
       </div>
       <p className="card-tag">{card.tag}</p>
       <h3 className="card-title">{card.title}</h3>
@@ -249,7 +249,7 @@ export default function Home() {
           {CONTACTS.map((c) => (
             <a
               key={c.label}
-              className={`contact-block contact-link ${c.accent ? "contact-accent" : ""}`}
+              className={`contact-block contact-link ${c.accent ? "contact-accent" : ""} ${c.label === "Email" ? "contact-email" : ""}`}
               href={c.href}
               target={c.href.startsWith("mailto:") ? undefined : "_blank"}
               rel={c.href.startsWith("mailto:") ? undefined : "noopener noreferrer"}
@@ -297,12 +297,26 @@ export default function Home() {
             {String(lightboxIndex! + 1).padStart(2, "0")} / {String(ALL_CARDS.length).padStart(2, "0")}
           </span>
           <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
-            <img
-              className="lightbox-img"
-              src={`${BASE}${lightboxCard.image}`}
-              alt={lightboxCard.title}
-              data-testid="lightbox-img"
-            />
+            {lightboxCard.video ? (
+              <video
+                key={lightboxCard.id}
+                className="lightbox-video"
+                src={`${BASE}${lightboxCard.video}`}
+                poster={`${BASE}${lightboxCard.image}`}
+                controls
+                muted
+                autoPlay
+                playsInline
+                data-testid="lightbox-video"
+              />
+            ) : (
+              <img
+                className="lightbox-img"
+                src={`${BASE}${lightboxCard.image}`}
+                alt={lightboxCard.title}
+                data-testid="lightbox-img"
+              />
+            )}
             <figcaption className="lightbox-caption">
               <span className="lightbox-tag">{lightboxCard.tag}</span>
               <span className="lightbox-title">{lightboxCard.title}</span>
@@ -626,6 +640,12 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   color: ${FG};
   word-break: break-word;
 }
+.contact-email .contact-value {
+  white-space: nowrap;
+  font-size: clamp(12px, 2.4vw, 15px);
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+}
 .contact-accent .contact-value { color: ${ACCENT}; }
 .contact-link { transition: opacity 0.15s ease; }
 .contact-link:hover, .contact-link:focus-visible { opacity: 0.7; outline: none; }
@@ -675,7 +695,8 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   max-width: min(1200px, 100%);
   max-height: 100%;
 }
-.lightbox-img {
+.lightbox-img,
+.lightbox-video {
   display: block;
   max-width: 100%;
   max-height: calc(100vh - 160px);
@@ -684,7 +705,9 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   object-fit: contain;
   border-radius: 2px;
   user-select: none;
+  background: #000;
 }
+.lightbox-video { width: min(960px, 100%); }
 .lightbox-caption {
   display: flex;
   flex-direction: column;
@@ -826,6 +849,7 @@ html, body { margin: 0; padding: 0; background: ${BG}; }
   .contact-block:first-child { grid-column: 1 / -1; }
   .contact-label { font-size: 8.5px; letter-spacing: 0.1em; }
   .contact-value { font-size: 13px; }
+  .contact-email .contact-value { font-size: 11px; word-break: keep-all; white-space: nowrap; }
   .contact-author { font-size: 15px; }
   .contact-block:nth-child(4) .contact-value { font-size: 11px; word-break: break-all; }
 }
